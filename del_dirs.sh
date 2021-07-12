@@ -1,4 +1,4 @@
-rm -r /home/xiaor/data/camera/
-rm -r /home/xiaor/data/lidar/
-mkdir /home/xiaor/data/camera
-mkdir /home/xiaor/data/lidar
+rm -r $HOME/data/camera/
+rm -r $HOME/data/lidar/
+mkdir $HOME/data/camera
+mkdir $HOME/data/lidar

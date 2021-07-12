@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+#Playback the captured camera data.
+#A video will appear showing each image while the timestamp related to the image will appear on console
+#Data array can be 1D or 3D.
+
+
 import numpy as np
 import cv2
 import os
