@@ -90,15 +90,15 @@ void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     updateFilePath();
 
     int count = scan->scan_time / scan->time_increment;
-    ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
+    //ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
     std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
-    ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
-    lidarOutputFile << "Time: " <<  ms.count() << "\n";
+    //ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
+    lidarOutputFile << ms.count() << "\n";
     std::cout << "Time: " << ms.count() << std::endl; 
 
     for(int i = 0; i < count; i++) {
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
-        lidarOutputFile << "Th: " << degree << " D(m): " << scan->ranges[i] << "\n";
+        lidarOutputFile << degree << " " << scan->ranges[i] << "\n";
     }
 
     lidarOutputFile.close();
