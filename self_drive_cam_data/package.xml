@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>visual_self_driving_lidar</name>
+  <name>self_drive_cam_data</name>
   <version>1.0.0</version>
-  <description>Visual and LiDAR data collection through autonomous driving car.</description>
+  <description>Visual data collection through autonomous driving car.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
