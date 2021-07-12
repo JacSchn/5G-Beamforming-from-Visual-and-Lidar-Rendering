@@ -9,6 +9,7 @@ import cv2
 import rospy
 from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
+from std_msgs.msg import String
 
 class BaseCamera:
 
@@ -37,10 +38,15 @@ class CSICamera(BaseCamera):
 
         print('CSICamera loaded.. .warming camera')
         time.sleep(2)
-        print('Setting up ROS camera publisher...')
+
+        print('Setting up ROS camera publishers...')
         self.pub = rospy.Publisher('cam_data', numpy_msg(Floats), queue_size=4)
+        self.pub_time = rospy.Publisher('cam_data_time', String, queue_size=4)
+
         rospy.init_node('cam_data_pub', anonymous=True)
-        print('ROS camera publisher set up with name cam_data_pub')
+        self.time = None
+        print('ROS camera publisher initialized. Topic name is cam_data')
+        print('ROS camera timestamp publisher initialized. Topic name is cam_data_time')
         time.sleep(2)
 
     def run(self):
@@ -48,12 +54,14 @@ class CSICamera(BaseCamera):
         return frame
     def run_threaded(self):
         ret,came = self.camera.read()
+        self.time = time.time()
         if not rospy.is_shutdown():
             try:
-                rospy.loginfo("Publishing camera data...")
-                came_flat = came.flatten('F')
+                self.pub_time.publish(str(self.time)) #publish timestamp of cam data
+                rospy.loginfo(self.time)
+                came_flat = came.flatten()
                 came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
-                self.pub.publish(came_flat)
+                self.pub.publish(came_flat) #publish cam data
             except rospy.ROSInterruptException:
                 rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
             except rospy.ROSTimeMovedBackwardsException:
