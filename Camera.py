@@ -31,11 +31,11 @@ GOALS:
 #180
 
 def gstreamer_pipeline(
-    capture_width=320,
-    capture_height=180,
-    display_width=320,
-    display_height=180,
-    framerate=60,
+    capture_width=160,
+    capture_height=120,
+    display_width=160,
+    display_height=120,
+    framerate=20,
     flip_method=0,
 ):
     return (
