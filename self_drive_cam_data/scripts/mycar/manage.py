@@ -15,17 +15,17 @@ Options:
 import os
 from docopt import docopt
 
-import visual_self_driving_lidar.donkeycar as dk
+import self_drive_cam_data.donkeycar as dk
 
 #import parts
-from visual_self_driving_lidar.donkeycar.parts.camera import PiCamera,CSICamera
-from visual_self_driving_lidar.donkeycar.parts.transform import Lambda
-from visual_self_driving_lidar.donkeycar.parts.keras import KerasLinear,KerasCategorical
-from visual_self_driving_lidar.donkeycar.parts.actuator import PCA9685, PWMSteering, PWMThrottle
-from visual_self_driving_lidar.donkeycar.parts.datastore import TubGroup, TubWriter
-from visual_self_driving_lidar.donkeycar.parts.controller import LocalWebController, JoystickController
-from visual_self_driving_lidar.donkeycar.parts.clock import Timestamp
-from visual_self_driving_lidar.donkeycar.parts.xrcamera import XRCamera
+from self_drive_cam_data.donkeycar.parts.camera import PiCamera,CSICamera
+from self_drive_cam_data.donkeycar.parts.transform import Lambda
+from self_drive_cam_data.donkeycar.parts.keras import KerasLinear,KerasCategorical
+from self_drive_cam_data.donkeycar.parts.actuator import PCA9685, PWMSteering, PWMThrottle
+from self_drive_cam_data.donkeycar.parts.datastore import TubGroup, TubWriter
+from self_drive_cam_data.donkeycar.parts.controller import LocalWebController, JoystickController
+from self_drive_cam_data.donkeycar.parts.clock import Timestamp
+from self_drive_cam_data.donkeycar.parts.xrcamera import XRCamera
 
 
 def drive(cfg, model_path=None, use_joystick=False, use_chaos=False):

@@ -9,7 +9,6 @@ import cv2
 import rospy
 from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
-from visual_self_driving_lidar.msg import Cam_msg
 
 class BaseCamera:
 
