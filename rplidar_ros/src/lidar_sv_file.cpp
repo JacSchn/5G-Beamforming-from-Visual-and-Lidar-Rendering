@@ -51,7 +51,7 @@
 class LidarProcessor
 {
     int numFiles = -2; //avoids counting two hidden dir
-    std::string filePath = "/home/xiaor/data/lidar/scan_data_";
+    std::string filePath = "/home/musk/data/lidar/scan_data_";
 
     public:
         LidarProcessor();
@@ -63,7 +63,7 @@ LidarProcessor::LidarProcessor(){
 //  count number of files in lidar directory
     DIR *dp;
     struct dirent *ep;
-    dp = opendir("/home/xiaor/data/lidar/");
+    dp = opendir("/home/musk/data/lidar/");
 
     if(dp != NULL)
     {
@@ -80,7 +80,7 @@ LidarProcessor::LidarProcessor(){
 
 void LidarProcessor::updateFilePath(){
     numFiles++;
-    filePath = "/home/xiaor/data/lidar/scan_data_" + std::to_string(numFiles) + ".txt";
+    filePath = "/home/musk/data/lidar/scan_data_" + std::to_string(numFiles) + ".txt";
 }
 
 void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){

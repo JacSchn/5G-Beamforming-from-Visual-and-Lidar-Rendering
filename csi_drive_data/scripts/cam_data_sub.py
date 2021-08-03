@@ -9,7 +9,7 @@ from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
 
 class FileCount:
-    file_cnt = len(os.listdir('/home/xiaor/data/camera'))
+    file_cnt = len(os.listdir('/home/musk/data/camera'))
 
     def get_count(self):
         return self.file_cnt
@@ -31,7 +31,7 @@ args[0] = FileCount
 args[1] = CameraTimeStamp
 '''
 def callback(data, args):
-    file_path = "/home/xiaor/data/camera/cam_data_%s" % str(args[0].get_count(args[0]))
+    file_path = "/home/musk/data/camera/cam_data_%s" % str(args[0].get_count(args[0]))
     #data.data = data.data.astype(dtype=np.uint8, copy=False)
     np.savez(file_path, args[1].time(args[1]),data.data.astype(dtype=np.uint8, copy=False))
     args[0].increment(args[0])
