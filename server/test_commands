@@ -1,0 +1,32 @@
+# Experiemental Commands
+# Used for testing stripping down sweep_dump data collection file
+# Test were performed using a sample file
+
+# sed is similar to a find a replace
+# We simply want to remove, so we replace with nothing
+
+# -n Stops printing of the result
+# -e alows for cmd
+# /p prints the result
+
+# A '\' is an escape character. Needed to prevent sed command from mistaking a '(' as regex. '[' and ')' as well.
+
+# Deletes '[' from file
+cat sample | sed -n -e 's/^.*\[//p'
+
+# Deletes 'src' from file
+cat sample | sed -n -e 's/\(src\)//p'
+
+# Deletes 'src: ' from file and deletes all text before end, but it doesn't since the \2\1 is there. 
+cat sample | sed -n -e 's/\(src: \)\(.*\)$/\2\1/p'
+
+# Deletes 'src: ' and '[' and ']' and 'sec: ' and 'cdown: '
+# awk will print the fifth element of the resulting output
+cat sample | sed -n -e 's/\(src: \)//' -n -e 's/\[//' -n -e 's/\]//' -n -e 's/\(sec: \)//' -n -e 's/\(cdown: \)//p' | awk '{print $5}'
+
+# Fully stips down the sample file to pure values.
+cat sample | sed -n -e 's/\(src: \)//' -n -e 's/\[//' -n -e 's/\]//' -n -e 's/\(sec: \)//' -n -e 's/\(cdown: \)//' -n -e 's/\(dir: \)//' -n -e 's/\(snr:  \)//' -n -e 's/\(dB \)//p'
+
+# Strips out first '[' and counts number of instances of number
+# Used to check if a full sweep is done, but may not be needed
+cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump  | sed -n -e 's/\(\[\)//p' | awk '{print $1}' |  grep -cw 3689

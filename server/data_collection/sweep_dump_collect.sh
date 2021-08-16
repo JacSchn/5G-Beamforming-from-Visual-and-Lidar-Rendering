@@ -16,6 +16,32 @@ file_namer () {
 	filepath=~/server_data/sweep_dump_data/"${file_counter}_sw_d"
 }
 
+strip_data () {
+	while true
+	do
+		timestamp=`date +%s%3N`
+		if [ ! -x "$filepath" ]; then
+			touch "$filepath"
+		fi
+
+		curr_swp_count=`cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | grep Counter | awk '{print $2}'`
+
+		if [ $swp_counter -gt $curr_swp_count ]; then
+			sleep $interval
+			continue
+		fi
+
+		echo ${timestamp} > $filepath
+		cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | sed -e 's/\[//' | grep -w "${swp_counter}" | sed -n -e 's/\(src: \)//' -n -e 's/\]//' -n -e 's/\(sec: \)//' -n -e 's/\(cdown: \)//' -n -e 's/\(dir: \)//' -n -e 's/\(snr:  \)//' -n -e 's/\(dB \)//p' >> $filepath
+
+		file_namer
+		swp_counter=`expr ${swp_counter} + 1`
+
+		sleep $interval
+	done
+}
+
+
 default_data () {
 	while true
 	do
@@ -40,8 +66,6 @@ default_data () {
 		sleep $interval
 	done
 }
-
-default_data
 
 # If true, then stripped data format
 # If false, then default data format
