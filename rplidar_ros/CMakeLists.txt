@@ -29,10 +29,13 @@ target_link_libraries(rplidarNode ${catkin_LIBRARIES})
 add_executable(rplidarNodeClient src/client.cpp)
 target_link_libraries(rplidarNodeClient ${catkin_LIBRARIES})
 
-add_executable(rplidarNodeWriteFile src/lidar_sv_file.cpp)
-target_link_libraries(rplidarNodeWriteFile ${catkin_LIBRARIES})
+add_executable(captureRPLiDAR src/lidar_sv_file.cpp)
+target_link_libraries(captureRPLiDAR ${catkin_LIBRARIES})
 
-install(TARGETS rplidarNode rplidarNodeClient rplidarNodeWriteFile
+add_executable(timeTest src/time_test.cpp)
+target_link_libraries(timeTest ${catkin_LIBRARIES})
+
+install(TARGETS rplidarNode rplidarNodeClient captureRPLiDAR
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
