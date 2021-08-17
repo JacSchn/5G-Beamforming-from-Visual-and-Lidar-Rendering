@@ -40,7 +40,7 @@ ssh root@192.168.1.7 '~/sync_time.sh'
 # Launch Client Router boot_network.sh script
 # Script pings 60GHz network
 gnome-terminal -q --window --title="Client Router" -e "bash -ic 'ssh -J root@192.168.1.7 root@192.168.100.10 eval \"~/data_collection/boot_network.sh; /bin/sh\"'"
-seep $nap
+sleep $nap
 
 # Launch LiDAR
 #gnome-terminal -q --window --title="LiDAR Launch" -e "bash -ic 'roslaunch rplidar_ros rplidar_a3.launch; $SHELL'"
