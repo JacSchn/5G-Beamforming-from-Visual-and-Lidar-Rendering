@@ -4,6 +4,12 @@
 # Opens each in their own terminal
 # This DOES NOT start any data collection
 
+## Can add a
+## ; $SHELL
+## to the end of the bash command to keep the terminal open when the task terminates
+## Ex:
+##       "bash -ic 'rosrun rplidar_ros captureRPLiDAR; #SHELL'"
+
 # Sleep time between calls
 nap=5
 
@@ -18,17 +24,23 @@ echo -e "\nDate on Nano:" `date`
 echo -e "Stop Script if date is incorrect\n"
 sleep $nap
 
-# Launch Server Router Terminal
-gnome-terminal -q --window --title="Server Router" -e "bash -ic 'ssh root@192.168.1.7; $SHELL'"
-ssh root@192.168.1.7 '~/sync_time.sh'
-sleep $nap
-
 # Sync Time
-echo -e "To access client router, use\n\t$ ssh root@192.168.100.10\nor:\n\t$ ./ssh_client.sh\nMust be connected to server router via ssh first\n"
+ssh root@192.168.1.7 '~/sync_time.sh'
 
-#Launch Client Router Terminal
-gnome-terminal -q --window --title="Client Router" -e "bash -ic 'ssh root@192.168.1.7; $SHELL'"
-sleep $nap
+##Launch Server Router Terminal
+##Uncomment if a dedicated terminal for the server router is wanted
+#gnome-terminal -q --window --title="Server Router" -e "bash -ic 'ssh root@192.168.1.7; $SHELL'"
+#sleep $nap
+
+##Launch Client Router Terminal
+##Uncomment if a dedicated terminal for the client router is wanted
+#gnome-terminal -q --window --title="Client Router" -e "bash -ic 'ssh -J root@192.168.1.7 root@192.168.100.10; $SHELL'"
+#sleep $nap
+
+# Launch Client Router boot_network.sh script
+# Script pings 60GHz network
+gnome-terminal -q --window --title="Client Router" -e "bash -ic 'ssh -J root@192.168.1.7 root@192.168.100.10 eval \"~/data_collection/boot_network.sh; /bin/sh\"'"
+seep $nap
 
 # Launch LiDAR
 #gnome-terminal -q --window --title="LiDAR Launch" -e "bash -ic 'roslaunch rplidar_ros rplidar_a3.launch; $SHELL'"
