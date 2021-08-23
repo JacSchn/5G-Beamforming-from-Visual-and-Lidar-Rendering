@@ -35,12 +35,13 @@
  */
 //Code modified by Shane Flynn
 
-#include <chrono>
+#include <chrono> // for timestamp
 #include <iostream>
 #include <fstream>
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 
+// C library files
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -48,6 +49,7 @@
 #include <typeinfo>
 #define RAD2DEG(x) ((x)*180./M_PI)
 
+// Manages lidar file names
 class LidarProcessor
 {
     int numFiles = -2; //avoids counting two hidden dir
@@ -78,6 +80,7 @@ LidarProcessor::LidarProcessor(){
     filePath += std::to_string(numFiles) + ".txt"; //initialize first file
 }
 
+// Update the file name for new scan
 void LidarProcessor::updateFilePath(){
     numFiles++;
     filePath = "/home/musk/data/lidar/scan_data_" + std::to_string(numFiles) + ".txt";
@@ -89,14 +92,18 @@ void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     lidarOutputFile.open(filePath, std::ios::out | std::ios::app);
     updateFilePath();
 
-    int count = scan->scan_time / scan->time_increment;
+    int count = scan->scan_time / scan->time_increment; //num of data points in scan
     //ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
-    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    //ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
-    lidarOutputFile << ms.count() << "\n";
-    std::cout << "Time: " << ms.count() << std::endl; 
 
-    for(int i = 0; i < count; i++) {
+    //timestamp
+    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+
+    //ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
+
+    lidarOutputFile << ms.count() << "\n"; //Output timestamp to file
+    std::cout << "Time: " << ms.count() << std::endl; //Display timestamp to console
+
+    for(int i = 0; i < count; i++) { //Convert scan data and output to file
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
         lidarOutputFile << degree << " " << scan->ranges[i] << "\n";
     }
