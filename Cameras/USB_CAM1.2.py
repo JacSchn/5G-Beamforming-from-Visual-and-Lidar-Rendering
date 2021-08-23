@@ -2,7 +2,16 @@ import sys
 import argparse
 import subprocess
 
+import os
+import time
+import numpy as np
+from PIL import Image
+import glob
 import cv2
+import rospy
+from rospy_tutorials.msg import Floats
+from rospy.numpy_msg import numpy_msg
+from std_msgs.msg import String
 
 
 WINDOW_NAME = 'CameraDemo'
@@ -74,8 +83,34 @@ def read_cam(cap):
             else:
                 cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN,
                                       cv2.WINDOW_NORMAL)
+                
+                
+def pub_setup(self, resolution=(1920, 1080), framerate=60):
+     print('Setting up ROS camera publishers...')
+        self.pub = rospy.Publisher('USBcam_data', numpy_msg(Floats), queue_size=4)
+        self.pub_time = rospy.Publisher('USBcam_data_time', String, queue_size=4)
 
-
+        rospy.init_node('USBcam_data_pub', anonymous=True)
+        self.time = None
+        print('ROS camera publisher initialized. Topic name is USBcam_data')
+        print('ROS camera timestamp publisher initialized. Topic name is USBcam_data_time')
+        time.sleep(2)
+        
+def publish(self):
+    self.time = time.time()
+        if not rospy.is_shutdown():
+            try:
+                self.pub_time.publish(str(self.time)) #publish timestamp of cam data
+                rospy.loginfo(self.time)
+                came_flat = came.flatten()
+                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
+                self.pub.publish(came_flat) #publish cam data
+            except rospy.ROSInterruptException:
+                rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
+            except rospy.ROSTimeMovedBackwardsException:
+                rospy.logerr("ROS Time Backwards! Just ignore the exception!")
+         
+    
 def main():
     args = parse_args()
     print('Called with args:')
@@ -92,6 +127,7 @@ def main():
 
     open_window(args.image_width, args.image_height)
     read_cam(cap)
+    pub_setup(self, resolution=(1920, 1080), framerate=60)
 
     cap.release()
     cv2.destroyAllWindows()
