@@ -149,7 +149,7 @@ class Vehicle:
             while self.on:
                 start_time = time.time()
                 loop_count += 1
-
+                # Interrupt script when ROS is shutdown
                 if rospy.is_shutdown():
                     print("Terminating ROS system")
                     raise KeyboardInterrupt
