@@ -43,8 +43,8 @@ gnome-terminal -q --window --title="Client Router" -e "bash -ic 'ssh -J root@192
 sleep $nap
 
 # Launch LiDAR
-#gnome-terminal -q --window --title="LiDAR Launch" -e "bash -ic 'roslaunch rplidar_ros rplidar_a3.launch; $SHELL'"
-#sleep $nap
+gnome-terminal -q --window --title="LiDAR Launch" -e "bash -ic 'roslaunch rplidar_ros rplidar_a3.launch; $SHELL'"
+sleep $nap
 
 # Launch Donkeycar
-#gnome-terminal -q --window --title="Donkeycar Self Drive" -e "bash -ic 'rosrun csi_drive_data manage.py drive; $SHELL'"
+gnome-terminal -q --window --title="Donkeycar Self Drive" -e "bash -ic 'rosrun csi_drive_data manage.py drive; $SHELL'"
