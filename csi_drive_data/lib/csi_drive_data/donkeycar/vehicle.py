@@ -13,7 +13,7 @@ from threading import Thread
 from .memory import Memory
 from prettytable import PrettyTable
 import traceback
-import rospy
+import rospy # import rospy library
 logger = logging.getLogger(__name__)
 
 
@@ -149,10 +149,11 @@ class Vehicle:
             while self.on:
                 start_time = time.time()
                 loop_count += 1
+
                 # Interrupt script when ROS is shutdown
                 if rospy.is_shutdown():
                     print("Terminating ROS system")
-                    raise KeyboardInterrupt
+                    raise KeyboardInterrupt # allows rest of donkeycar to clean up nicely
 
                 self.update_parts()
 
@@ -190,7 +191,7 @@ class Vehicle:
             if entry.get('run_condition'):
                 run_condition = entry.get('run_condition')
                 run = self.mem.get([run_condition])[0]
-            
+
             if run:
                 # get part
                 p = entry['part']
@@ -210,7 +211,7 @@ class Vehicle:
                 # finish timing part run
                 self.profiler.on_part_finished(p)
 
-    def stop(self):        
+    def stop(self):
         logger.info('Shutting down vehicle and its parts...')
         for entry in self.parts:
             try:

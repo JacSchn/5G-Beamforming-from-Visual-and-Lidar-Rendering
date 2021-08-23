@@ -7,10 +7,11 @@ from PIL import Image
 import glob
 from donkeycar.utils import rgb2gray
 
+# ROS library imports
 import rospy
-from rospy_tutorials.msg import Floats
-from rospy.numpy_msg import numpy_msg
-from std_msgs.msg import String
+from rospy_tutorials.msg import Floats # Message data type
+from rospy.numpy_msg import numpy_msg # For cam data
+from std_msgs.msg import String # Message data type
 
 class BaseCamera:
 
@@ -161,10 +162,16 @@ class CSICamera(BaseCamera):
 
         # initialize ROS topics for cam image
         print('Setting up ROS CSIC camera publisher...')
+        # Create publisher to 'cam_data' topic
+        # Cam data is a numpy array
         self.pub = rospy.Publisher('cam_data', numpy_msg(Floats), queue_size=4)
+        # Create publisher to 'cam_data_time'
+        # Used to publish timestamp
         self.pub_time = rospy.Publisher('cam_data_time', String, queue_size=4)
 
+        # Initialize ROS node for this file
         rospy.init_node('cam_data_pub', anonymous=True)
+        # Holds timestamp
         self.time = None
         print('ROS CSIC camera publisher initialized. Topic name is cam_data')
         print('ROS camera timestamp publisher initialized. Topic name is cam_data_time')
@@ -195,15 +202,17 @@ class CSICamera(BaseCamera):
 
     def poll_camera(self):
         import cv2
+        # 'frame' is variable name for camera array
         self.ret , frame = self.camera.read()
 
+        # get timestamp
         self.time = time.time()
-        if not rospy.is_shutdown():
+        if not rospy.is_shutdown(): # only go if ROS is up
             try:
                 self.pub_time.publish(str(self.time)) #publish timestamp of cam data
-                rospy.loginfo(self.time)
-                came_flat = frame.flatten()
-                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
+                rospy.loginfo(self.time) # display to console timestamp
+                came_flat = frame.flatten() # can only pub a 1D array, not 3D. Must flatten array
+                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False) # change data type of array. Needed to publish as Float
                 self.pub.publish(came_flat) #publish cam data
             except rospy.ROSInterruptException:
                 rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
