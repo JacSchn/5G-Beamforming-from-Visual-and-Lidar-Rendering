@@ -32,7 +32,7 @@ strip_data () {
 		fi
 
 		echo ${timestamp} > $filepath
-		cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | sed -e 's/\[//' | grep -w "${swp_counter}" | sed -n -e 's/\(src: \)//' -n -e 's/\]//' -n -e 's/\(sec: \)//' -n -e 's/\(cdown: \)//' -n -e 's/\(dir: \)//' -n -e 's/\(snr:  \)//' -n -e 's/\(dB \)//p' >> $filepath
+		cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | sed -e 's/\[//' | grep -w "${swp_counter} src:" | sed -n -e 's/\(src: \)//' -n -e 's/\]//' -n -e 's/\(sec: \)//' -n -e 's/\(cdown: \)//' -n -e 's/\(dir: \)//' -n -e 's/\(snr:  \)//' -n -e 's/\(dB \)//p' >> $filepath
 
 		file_namer
 		swp_counter=`expr ${swp_counter} + 1`
