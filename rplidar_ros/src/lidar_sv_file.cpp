@@ -91,7 +91,7 @@ void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
     int count = scan->scan_time / scan->time_increment;
     //ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
-    std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
+    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     //ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
     lidarOutputFile << ms.count() << "\n";
     std::cout << "Time: " << ms.count() << std::endl; 
