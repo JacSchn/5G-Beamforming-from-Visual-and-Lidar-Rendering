@@ -17,27 +17,26 @@ from std_msgs.msg import String
 WINDOW_NAME = 'CameraDemo'
 
 
+def parse_args():
+    # Parse input arguments
+    desc = 'Capture and display live camera video on Jetson TX2/TX1'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('--usb', dest='use_usb',
+                        help='use USB webcam (remember to also set --vid)',
+                        action='store_true')
+    parser.add_argument('--vid', dest='video_dev',
+                        help='device # of USB webcam (/dev/video?) [1]',
+                        default=1, type=int)
+    parser.add_argument('--width', dest='image_width',
+                        help='image width [1920]',
+                        default=1920, type=int)
+    parser.add_argument('--height', dest='image_height',
+                        help='image height [1080]',
+                        default=1080, type=int)
+    args = parser.parse_args()
+    return args
+
 class USBCam:
-    def parse_args():
-        # Parse input arguments
-        desc = 'Capture and display live camera video on Jetson TX2/TX1'
-        parser = argparse.ArgumentParser(description=desc)
-        parser.add_argument('--usb', dest='use_usb',
-                            help='use USB webcam (remember to also set --vid)',
-                            action='store_true')
-        parser.add_argument('--vid', dest='video_dev',
-                           help='device # of USB webcam (/dev/video?) [1]',
-                            default=1, type=int)
-        parser.add_argument('--width', dest='image_width',
-                            help='image width [1920]',
-                            default=1920, type=int)
-        parser.add_argument('--height', dest='image_height',
-                            help='image height [1080]',
-                            default=1080, type=int)
-        args = parser.parse_args()
-        return args
-
-
     def open_cam_usb(dev, width, height):
         # We want to set width and height here, otherwise we could just do:
         #     return cv2.VideoCapture(dev)
