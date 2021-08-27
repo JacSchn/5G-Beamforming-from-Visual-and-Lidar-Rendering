@@ -99,17 +99,17 @@ class USBCam:
         
     def publish(self):
         self.time = time.time()
-            if not rospy.is_shutdown():
-                try:
-                    self.pub_time.publish(str(self.time)) #publish timestamp of cam data
-                    rospy.loginfo(self.time)
-                    came_flat = came.flatten()
-                    came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
-                    self.pub.publish(came_flat) #publish cam data
-                except rospy.ROSInterruptException:
-                    rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
-                except rospy.ROSTimeMovedBackwardsException:
-                    rospy.logerr("ROS Time Backwards! Just ignore the exception!")
+        if not rospy.is_shutdown():
+            try:
+                self.pub_time.publish(str(self.time)) #publish timestamp of cam data
+                rospy.loginfo(self.time)
+                came_flat = came.flatten()
+                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
+                self.pub.publish(came_flat) #publish cam data
+            except rospy.ROSInterruptException:
+                rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
+            except rospy.ROSTimeMovedBackwardsException:
+                rospy.logerr("ROS Time Backwards! Just ignore the exception!")
          
     
 def main():
