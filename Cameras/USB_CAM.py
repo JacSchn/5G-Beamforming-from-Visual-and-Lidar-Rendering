@@ -14,6 +14,7 @@
 import sys
 import argparse
 import subprocess
+import time
 
 import cv2
 
@@ -37,15 +38,19 @@ def parse_args():
     parser.add_argument('--usb', dest='use_usb',
                         help='use USB webcam (remember to also set --vid)',
                         action='store_true')
+    # Argument for using Sony IMX322 USB camera
+    parser.add_argument('--sony', dest='use_sony',
+                        help='use Sony IMX322 webcam (remember to also set --vid)',
+                        action='store_true')
     parser.add_argument('--vid', dest='video_dev',
                         help='device # of USB webcam (/dev/video?) [1]',
                         default=1, type=int)
     parser.add_argument('--width', dest='image_width',
                         help='image width [1920]',
-                        default=160, type=int)
+                        default=1280, type=int)
     parser.add_argument('--height', dest='image_height',
                         help='image height [1080]',
-                        default=120, type=int)
+                        default=720, type=int)
     args = parser.parse_args()
     return args
 
@@ -59,6 +64,18 @@ def open_cam_rtsp(uri, width, height, latency):
                'videoconvert ! appsink').format(uri, latency, width, height)
     return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
+# Open the stream for sony IMX322 USB camera
+def open_cam_sony(dev):
+    gst_str = ('v4l2src device=/dev/video{} ! jpegdec ! videoconvert ! appsink').format(dev)
+# Below two comments do not work. They are attempts at setting a framerate for the camera
+#    gst_str = ('v4l2src device="/dev/video{}" ! "image/jpeg, width=1280, height=720, framerate=(fraction)30/1, format=(string)MJPG" ! jpegdec ! autovideosink').format(dev)
+#    gst_str = ('v4l2src device="/dev/video{}" ! "image/jpeg, width=1280, height=720, framerate=30/1, format=(string)MJPG" ! jpegdec ! videoconvert ! autovideosink').format(dev)
+
+    cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    #cap.set(cv2.CAP_PROP_FPS, 15.000)
+    return cap
 
 def open_cam_usb(dev, width, height):
     # We want to set width and height here, otherwise we could just do:
@@ -105,21 +122,50 @@ def open_window(width, height):
 def read_cam(cap):
     show_help = True
     full_scrn = False
+    disp_info = True
     help_text = '"Esc" to Quit, "H" for Help, "F" to Toggle Fullscreen'
     font = cv2.FONT_HERSHEY_PLAIN
+
+    frame_rate = 15
+    prev = 0
+
     while True:
         if cv2.getWindowProperty(WINDOW_NAME, 0) < 0:
             # Check to see if the user has closed the window
             # If yes, terminate the program
             break
+
+        time_elasped = time.time() - prev
         _, img = cap.read() # grab the next image frame from camera
+
+        if time_elasped > 1./frame_rate:
+            # manual framerate. Only allow rest of code to run if time elapsed is correct for framerate
+            prev = time.time()
+        else:
+            time.sleep(0.0667)
+
         if show_help:
             cv2.putText(img, help_text, (11, 20), font,
                         1.0, (32, 32, 32), 4, cv2.LINE_AA)
             cv2.putText(img, help_text, (10, 20), font,
                         1.0, (240, 240, 240), 1, cv2.LINE_AA)
-        cv2.imshow(WINDOW_NAME, img)
+        #cv2.imshow(WINDOW_NAME, img)
         key = cv2.waitKey(10)
+
+        # Display camera stream info
+        if disp_info:
+            print("Image type: " + str(type(img)))
+            print("Image array shape: " + str(img.shape))
+            print("Image array size: " + str(img.size))
+            print("Image array bytes: " + str(img.nbytes))
+            print("Image array data type: " + str(img.dtype))
+            print("FPS: " + str(cap.get(cv2.CAP_PROP_FPS)))
+            print("cv2 Width: " + str(cap.get(cv2.CAP_PROP_FRAME_WIDTH)))
+            print("cv2 Height: " + str(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+            print("cv2 Format: " + str(cap.get(cv2.CAP_PROP_MODE)))
+            print(str(img))
+            disp_info = False
+
         if key == 27: # ESC key: quit program
             break
         elif key == ord('H') or key == ord('h'): # toggle help message
@@ -133,6 +179,41 @@ def read_cam(cap):
                 cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN,
                                       cv2.WINDOW_NORMAL)
 
+
+def read_cam_sony(cap):
+    frame_rate = 15
+    prev = 0
+    disp_info = True
+
+    while True:
+        time_elasped = time.time() - prev
+        _, img = cap.read() # grab the next image frame from camera
+
+        if time_elasped > 1./frame_rate:
+            # manual framerate. Only allow rest of code to run if time elapsed is correct for framerate
+            prev = time.time()
+        else:
+            time.sleep(0.0667)
+
+        #cv2.imshow(WINDOW_NAME, img)
+        key = cv2.waitKey(10)
+
+        # Display camera stream info
+        if disp_info:
+            print("Image type: " + str(type(img)))
+            print("Image array shape: " + str(img.shape))
+            print("Image array size: " + str(img.size))
+            print("Image array bytes: " + str(img.nbytes))
+            print("Image array data type: " + str(img.dtype))
+            print("FPS: " + str(cap.get(cv2.CAP_PROP_FPS)))
+            print("cv2 Width: " + str(cap.get(cv2.CAP_PROP_FRAME_WIDTH)))
+            print("cv2 Height: " + str(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+            print("cv2 Format: " + str(cap.get(cv2.CAP_PROP_MODE)))
+            print(str(img))
+            disp_info = False
+
+        if key == 27: # ESC key: quit program
+            break
 
 def main():
     args = parse_args()
@@ -149,6 +230,9 @@ def main():
         cap = open_cam_usb(args.video_dev,
                            args.image_width,
                            args.image_height)
+    elif args.use_sony: # if Sony IMX322
+        cap = open_cam_sony(args.video_dev)
+
     else: # by default, use the Jetson onboard camera
         cap = open_cam_onboard(args.image_width,
                                args.image_height)
@@ -156,8 +240,8 @@ def main():
     if not cap.isOpened():
         sys.exit('Failed to open camera!')
 
-    open_window(args.image_width, args.image_height)
-    read_cam(cap)
+    #open_window(args.image_width, args.image_height)
+    read_cam_sony(cap)
 
     cap.release()
     cv2.destroyAllWindows()
