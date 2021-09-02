@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 import os
 import rospy
@@ -20,6 +19,17 @@ import subprocess
 
 import cv2
 
+'''
+TODO
+1. Allow user to add arguments for video port of sony camera
+	This will be used to subscribe to the correct topic since the topic is based on the camera port number
+
+2. Allow user to add argument for destination folder
+	Can be just the end folder and add it to the file_path
+	Both front and rear camera will go to separate folders. This method allows this with the same script
+
+'''
+
 
 def parse_args():
     # Parse input arguments
@@ -29,7 +39,7 @@ def parse_args():
                         help='device # of USB webcam (/dev/video?) [1]',
                         default=1, type=int)
 
-    parser.add_argument('--dest', dest='data_dest',
+    parser.add_argument('--dest', dest='data_dest', # ex. "--dest front_usb"
                         help='destination folder for camera data',
                         default=None, type=string)
 
@@ -39,7 +49,7 @@ def parse_args():
     return args
 
 class FileCount:
-    file_cnt = len(os.listdir('/home/musk/data/camera'))
+    file_cnt = len(os.listdir('/home/musk/data/camera')) # change to account for dest folder
 
     def get_count(self):
         return self.file_cnt
@@ -61,7 +71,7 @@ args[0] = FileCount
 args[1] = CameraTimeStamp
 '''
 def callback(data, args):
-    file_path = "/home/musk/data/camera/cam_data_%s" % str(args[0].get_count(args[0]))
+    file_path = "/home/musk/data/camera/cam_data_%s" % str(args[0].get_count(args[0])) # change to account for dest folder
     #data.data = data.data.astype(dtype=np.uint8, copy=False)
     np.savez(file_path, args[1].time(args[1]),data.data.astype(dtype=np.uint8, copy=False))
     args[0].increment(args[0])

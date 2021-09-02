@@ -1,8 +1,6 @@
+#!/usr/bin/env python3
 '''
-Script allows use of webcam, sony IMX322 USB camera, and CSI camera
-
-
-
+Publisher for Sony IMX322 cameras
 '''
 
 import sys
@@ -12,6 +10,14 @@ import time
 
 import cv2
 
+'''
+TODO
+1. Strip out non-necessary functions and arguments
+
+2. Add publisher for timestamp and camera data
+	The publisher topic must relate to the camera port number
+
+'''
 
 def parse_args():
     # Parse input arguments
@@ -58,9 +64,15 @@ def read_cam(cap):
     frame_rate = 15
     prev = 0
     disp_info = True
-
+'''
+Initialize ROS node here
+Initialize ROS topic to publish to here
+'''
     while True:
         time_elasped = time.time() - prev
+
+#### Add timestamp collection here ####
+
         _, img = cap.read() # grab the next image frame from camera
 
         if time_elasped > 1./frame_rate:
@@ -69,7 +81,9 @@ def read_cam(cap):
         else:
             continue
 
-        #cv2.imshow(WINDOW_NAME, img)
+#### Add ROS publisher for camera data and timestamp here ####
+
+        #cv2.imshow(WINDOW_NAME, img) shows camera image
         key = cv2.waitKey(10)
 
         # Display camera stream info
