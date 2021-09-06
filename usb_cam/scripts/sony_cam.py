@@ -65,19 +65,18 @@ def read_cam(cap):
 
 # Initialize ROS node here
 # Initialize ROS topic to publish to here
-port_name = ("usb_port_%s" % str(args.video_dev))
-time_name = ("ts_port_%s" % str(args.video_dev))
+    port_name = ("usb_port_%s" % str(args.video_dev))
+    time_name = ("ts_port_%s" % str(args.video_dev))
 
-def cam_pub_setup(self, resolution=(1280, 720), framerate=60):
-        print('Setting up ROS camera publishers...')
-        self.pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
-        self.pub_time = rospy.Publisher(time_name, String, queue_size=4)
+    print('Setting up ROS camera publishers...')
+    self.pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
+    self.pub_time = rospy.Publisher(time_name, String, queue_size=4)
 
-        rospy.init_node('USBcam_data_pub', anonymous=True)
-        self.time = None
-        print('ROS camera publisher initialized. Topic name is ' port_name)
-        print('ROS camera timestamp publisher initialized. Topic name is ' time_name)
-        time.sleep(2)
+    rospy.init_node('USB_cam_data_pub', anonymous=True)
+    self.time = None
+    print('ROS camera publisher initialized. Topic name is %s' % port_name)
+    print('ROS camera timestamp publisher initialized. Topic name is %s' % time_name)
+    time.sleep(2)
 
     while True:
         time_elasped = time.time() - prev
