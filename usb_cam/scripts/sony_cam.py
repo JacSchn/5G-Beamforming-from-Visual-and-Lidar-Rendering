@@ -100,7 +100,7 @@ def read_cam(cap, port_name, time_name):
             try:
                 pub_timestamp.publish(str(timestamp)) #publish timestamp of cam data
                 rospy.loginfo(timestamp)
-                came_flat = came.flatten()
+                came_flat = img.flatten()
                 came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
                 pub.publish(came_flat) #publish cam data
             except rospy.ROSInterruptException:
