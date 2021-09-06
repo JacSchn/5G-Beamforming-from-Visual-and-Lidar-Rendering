@@ -52,7 +52,7 @@ def open_cam_sony(dev, width, height):
     #cap.set(cv2.CAP_PROP_FPS, 15.000)
     return cap
 
-def open_cam_usb(dev, width, height):-
+def open_cam_usb(dev, width, height):
     gst_str = ('v4l2src device=/dev/video{} ! '
                'video/x-raw, width=(int){}, height=(int){} ! '
                'videoconvert ! appsink').format(dev, width, height)
