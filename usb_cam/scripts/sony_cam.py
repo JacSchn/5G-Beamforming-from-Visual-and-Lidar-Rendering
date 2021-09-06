@@ -44,8 +44,8 @@ def parse_args():
 
 # Open the stream for sony IMX322 USB camera
 def open_cam_sony(dev, width, height):
-#    gst_str = ('v4l2src device=/dev/video{} ! jpegdec ! videoconvert ! appsink').format(dev)
-    gst_str = "v4l2src 'device=/dev/video1 io-mode=2' ! 'image/jpeg,width=1280,height=720' ! nvjpegdec ! video/x-raw ! nvvidconv ! 'video/x-raw(memory:NVMM),format=I420' ! nvoverlaysink"
+    gst_str = ('v4l2src device=/dev/video{} ! jpegdec ! videoconvert ! appsink').format(dev) # This command works
+#    gst_str = "v4l2src 'device=/dev/video1 io-mode=2' ! 'image/jpeg,width=1280,height=720' ! nvjpegdec ! video/x-raw ! nvvidconv ! 'video/x-raw(memory:NVMM),format=I420' ! nvoverlaysink"
     cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(width))
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(height))
@@ -83,7 +83,7 @@ def read_cam(cap):
 
 #### Add ROS publisher for camera data and timestamp here ####
 
-        cv2.imshow(WINDOW_NAME, img) # shows camera image
+        cv2.imshow('Hello There', img) # shows camera image
         key = cv2.waitKey(10)
 
         # Display camera stream info
