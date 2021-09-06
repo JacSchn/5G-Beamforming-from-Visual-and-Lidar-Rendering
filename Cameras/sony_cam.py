@@ -68,7 +68,6 @@ def read_cam(cap):
             prev = time.time()
         else:
             continue
-
         #cv2.imshow(WINDOW_NAME, img)
         key = cv2.waitKey(10)
 
