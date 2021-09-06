@@ -18,7 +18,7 @@ TODO
 	The publisher topic must relate to the camera port number
 
 '''
-
+#test
 def parse_args():
     # Parse input arguments
     desc = 'Capture and display live camera video on Jetson Nano'
