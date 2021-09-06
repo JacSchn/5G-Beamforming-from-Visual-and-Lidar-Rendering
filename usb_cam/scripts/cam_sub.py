@@ -1,4 +1,5 @@
 # Pinapple on pizza is a crime and deserves less pizza
+# White sauce pizza is also gross
 #!/usr/bin/env python3
 import os
 import rospy
