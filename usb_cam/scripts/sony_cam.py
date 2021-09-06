@@ -64,10 +64,10 @@ def read_cam(cap):
     frame_rate = 15
     prev = 0
     disp_info = True
-'''
-Initialize ROS node here
-Initialize ROS topic to publish to here
-'''
+
+# Initialize ROS node here
+# Initialize ROS topic to publish to here
+
     while True:
         time_elasped = time.time() - prev
 
@@ -83,7 +83,7 @@ Initialize ROS topic to publish to here
 
 #### Add ROS publisher for camera data and timestamp here ####
 
-        #cv2.imshow(WINDOW_NAME, img) shows camera image
+        cv2.imshow(WINDOW_NAME, img) # shows camera image
         key = cv2.waitKey(10)
 
         # Display camera stream info
@@ -113,14 +113,10 @@ def main():
         cap = open_cam_usb(args.video_dev,
                            args.image_width,
                            args.image_height)
-    elif args.use_sony: # if Sony IMX322
+    else: # if Sony IMX322
         cap = open_cam_sony(args.video_dev,
                             args.image_width,
                             args.image_height)
-
-    else: # by default, use the Jetson onboard camera
-        cap = open_cam_onboard(args.image_width,
-                               args.image_height)
 
     if not cap.isOpened():
         sys.exit('Failed to open camera!')
