@@ -58,15 +58,14 @@ def open_cam_usb(dev, width, height):-
                'videoconvert ! appsink').format(dev, width, height)
     return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
-def read_cam(cap):
+def read_cam(cap, port_name, time_name):
     frame_rate = 15
     prev = 0
     disp_info = True
 
 # Initialize ROS node here
 # Initialize ROS topic to publish to here
-    port_name = ("usb_port_%s" % str(args.video_dev))
-    time_name = ("ts_port_%s" % str(args.video_dev))
+   
 
     print('Setting up ROS camera publishers...')
     self.pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
@@ -145,7 +144,10 @@ def main():
     if not cap.isOpened():
         sys.exit('Failed to open camera!')
 
-    read_cam(cap)
+    port_name = ("usb_port_%s" % str(args.video_dev))
+    time_name = ("ts_port_%s" % str(args.video_dev))
+	
+    read_cam(cap, port_name, time_name)
 
     cap.release()
     cv2.destroyAllWindows()
