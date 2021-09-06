@@ -19,6 +19,7 @@ TODO
 
 '''
 #test
+#test 2
 def parse_args():
     # Parse input arguments
     desc = 'Capture and display live camera video on Jetson Nano'
