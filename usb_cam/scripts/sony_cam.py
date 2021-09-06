@@ -7,7 +7,7 @@ import sys
 import argparse
 import subprocess
 import time
-
+import numpy as np
 import cv2
 import rospy
 from rospy_tutorials.msg import Floats
