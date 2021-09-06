@@ -8,7 +8,7 @@
 ## ; $SHELL
 ## to the end of the bash command to keep the terminal open when the task terminates
 ## Ex:
-##       "bash -ic 'rosrun rplidar_ros captureRPLiDAR; #SHELL'"
+##       "bash -ic 'rosrun rplidar_ros captureRPLiDAR; $SHELL'"
 
 # Sleep time between calls
 nap=5
