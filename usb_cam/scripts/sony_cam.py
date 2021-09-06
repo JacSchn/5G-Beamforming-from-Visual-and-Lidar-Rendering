@@ -52,9 +52,7 @@ def open_cam_sony(dev, width, height):
     #cap.set(cv2.CAP_PROP_FPS, 15.000)
     return cap
 
-def open_cam_usb(dev, width, height):
-    # We want to set width and height here, otherwise we could just do:
-    #     return cv2.VideoCapture(dev)
+def open_cam_usb(dev, width, height):-
     gst_str = ('v4l2src device=/dev/video{} ! '
                'video/x-raw, width=(int){}, height=(int){} ! '
                'videoconvert ! appsink').format(dev, width, height)
@@ -67,6 +65,19 @@ def read_cam(cap):
 
 # Initialize ROS node here
 # Initialize ROS topic to publish to here
+port_name = ("usb_port_%s" % str(args.video_dev))
+time_name = ("ts_port_%s" % str(args.video_dev))
+
+def cam_pub_setup(self, resolution=(1280, 720), framerate=60):
+        print('Setting up ROS camera publishers...')
+        self.pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
+        self.pub_time = rospy.Publisher(time_name, String, queue_size=4)
+
+        rospy.init_node('USBcam_data_pub', anonymous=True)
+        self.time = None
+        print('ROS camera publisher initialized. Topic name is ' port_name)
+        print('ROS camera timestamp publisher initialized. Topic name is ' time_name)
+        time.sleep(2)
 
     while True:
         time_elasped = time.time() - prev
@@ -82,6 +93,20 @@ def read_cam(cap):
             continue
 
 #### Add ROS publisher for camera data and timestamp here ####
+        
+    def publish(self):
+        self.time = time.time()
+        if not rospy.is_shutdown():
+            try:
+                self.pub_time.publish(str(self.time)) #publish timestamp of cam data
+                rospy.loginfo(self.time)
+                came_flat = came.flatten()
+                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
+                self.pub.publish(came_flat) #publish cam data
+            except rospy.ROSInterruptException:
+                rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
+            except rospy.ROSTimeMovedBackwardsException:
+                rospy.logerr("ROS Time Backwards! Just ignore the exception!")
 
         cv2.imshow('Hello There', img) # shows camera image
         key = cv2.waitKey(10)
