@@ -63,16 +63,16 @@ def read_cam(cap, port_name, time_name):
     prev = 0
     disp_info = True
 
-# Initialize ROS node here
-# Initialize ROS topic to publish to here
+
+# Initialize ROS topics to publish to below #
    
 
     print('Setting up ROS camera publishers...')
-    self.pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
-    self.pub_time = rospy.Publisher(time_name, String, queue_size=4)
+    pub = rospy.Publisher(port_name, numpy_msg(Floats), queue_size=4)
+    pub_timestamp = rospy.Publisher(time_name, String, queue_size=4)
 
     rospy.init_node('USB_cam_data_pub', anonymous=True)
-    self.time = None
+    timestamp = None
     print('ROS camera publisher initialized. Topic name is %s' % port_name)
     print('ROS camera timestamp publisher initialized. Topic name is %s' % time_name)
     time.sleep(2)
@@ -80,7 +80,7 @@ def read_cam(cap, port_name, time_name):
     while True:
         time_elasped = time.time() - prev
 
-#### Add timestamp collection here ####
+        timestamp = time.time() #timestamp collection
 
         _, img = cap.read() # grab the next image frame from camera
 
@@ -90,17 +90,15 @@ def read_cam(cap, port_name, time_name):
         else:
             continue
 
-#### Add ROS publisher for camera data and timestamp here ####
-        
-    def publish(self):
-        self.time = time.time()
+# ROS publisher for camera data and timestamp below #
+       
         if not rospy.is_shutdown():
             try:
-                self.pub_time.publish(str(self.time)) #publish timestamp of cam data
+                pub_timestamp.publish(str(self.time)) #publish timestamp of cam data
                 rospy.loginfo(self.time)
                 came_flat = came.flatten()
                 came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
-                self.pub.publish(came_flat) #publish cam data
+                pub.publish(came_flat) #publish cam data
             except rospy.ROSInterruptException:
                 rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
             except rospy.ROSTimeMovedBackwardsException:
