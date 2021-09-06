@@ -1,4 +1,4 @@
-# Pinapple on pizza is a crime
+# Pinapple on pizza is a crime and deserves less pizza
 #!/usr/bin/env python3
 import os
 import rospy
