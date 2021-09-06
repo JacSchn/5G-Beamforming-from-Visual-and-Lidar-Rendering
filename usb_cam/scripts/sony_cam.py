@@ -63,7 +63,7 @@ def open_cam_usb(dev, width, height):
     return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
 def read_cam(cap, port_name, time_name):
-    frame_rate = 15
+    frame_rate = 60
     prev = 0
     disp_info = True
 
@@ -82,17 +82,22 @@ def read_cam(cap, port_name, time_name):
     time.sleep(2)
 
     while True:
+
+        if rospy.is_shutdown():
+            print("Terminating ROS system")
+            break
+
         time_elasped = time.time() - prev
 
         timestamp = time.time() #timestamp collection
 
         _, img = cap.read() # grab the next image frame from camera
 
-        if time_elasped > 1./frame_rate:
+#        if time_elasped > 1./frame_rate: # This seems to be making things slow. ROS slows things down a lot by itself
             # manual framerate. Only allow rest of code to run if time elapsed is correct for framerate
-            prev = time.time()
-        else:
-            continue
+#            prev = time.time()
+#        else:
+#            continue
 
 # ROS publisher for camera data and timestamp below #
        
@@ -100,15 +105,15 @@ def read_cam(cap, port_name, time_name):
             try:
                 pub_timestamp.publish(str(timestamp)) #publish timestamp of cam data
                 rospy.loginfo(timestamp)
-                came_flat = img.flatten()
-                came_flat = came_flat.astype(dtype=np.float32, casting='safe', copy=False)
-                pub.publish(came_flat) #publish cam data
+                img_flat = img.flatten()
+                img_flat = img_flat.astype(dtype=np.float32, casting='safe', copy=False)
+                pub.publish(img_flat) #publish cam data
             except rospy.ROSInterruptException:
                 rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
             except rospy.ROSTimeMovedBackwardsException:
                 rospy.logerr("ROS Time Backwards! Just ignore the exception!")
 
-        cv2.imshow('Hello There', img) # shows camera image
+#       cv2.imshow('Hello There', img) # shows camera image
         key = cv2.waitKey(10)
 
         # Display camera stream info
@@ -124,9 +129,6 @@ def read_cam(cap, port_name, time_name):
             print("cv2 Format: " + str(cap.get(cv2.CAP_PROP_MODE)))
             print(str(img))
             disp_info = False
-
-        if key == 27: # ESC key: quit program
-            break
 
 def main():
     args = parse_args()
@@ -148,7 +150,6 @@ def main():
 
     port_name = ("usb_port_%s" % str(args.video_dev))
     time_name = ("ts_port_%s" % str(args.video_dev))
-	
     read_cam(cap, port_name, time_name)
 
     cap.release()

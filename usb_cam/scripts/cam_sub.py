@@ -41,17 +41,26 @@ def parse_args():
 
     parser.add_argument('--dest', dest='data_dest', # ex. "--dest front_usb"
                         help='destination folder for camera data',
-                        default=None, type=string)
+                        default=None)
 
     args = parser.parse_args()
     return args
 
 class FileCount:
+    file_path = ""
     file_cnt = 0
+    init = True
 
-    def initialize_count(self, data_dest):
-        file_path = "/home/musk/data/%s" % data_dest
-        file_cnt = len(os.listdir(file_path))
+    def init_count(self, data_dest):
+        self.file_path = "/home/musk/data/%s" % data_dest
+        self.file_cnt = len(os.listdir(self.file_path))
+        print("Init: %i" % self.file_cnt)
+
+    def set_init(self):
+        self.init = False
+
+    def get_init(self):
+        return self.init
 
     def get_count(self):
         return self.file_cnt
@@ -74,6 +83,11 @@ args[1] = CameraTimeStamp
 args[2] = data_dest
 '''
 def callback(data, args):
+    if args[0].get_init(args[0]):
+        print("Initialize count")
+        args[0].init_count(args[0], args[2])
+        args[0].set_init(args[0])
+
     file_path = "/home/musk/data/%s/usb_data_%s" % (str(args[2]), str(args[0].get_count(args[0]))) # change to account for dest folder
     #data.data = data.data.astype(dtype=np.uint8, copy=False)
     np.savez(file_path, args[1].time(args[1]),data.data.astype(dtype=np.uint8, copy=False))
@@ -91,8 +105,6 @@ def listener():
 
     port_name = ("usb_port_%s" % str(port))
     time_name = ("ts_port_%s" % str(port))
-
-    FileCount.initialize_count(FileCount, data_dest) # Set up filepath to count number of files
 
     rospy.init_node('usb_cam_sub', anonymous=True)
     rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
