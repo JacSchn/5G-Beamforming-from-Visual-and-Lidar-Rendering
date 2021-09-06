@@ -1,5 +1,3 @@
-# Pinapple on pizza is a crime and deserves less pizza
-# White sauce pizza is also gross 
 #!/usr/bin/env python3
 import os
 import rospy
@@ -45,8 +43,6 @@ def parse_args():
                         help='destination folder for camera data',
                         default=None, type=string)
 
-    parser.add_argument(
-
     args = parser.parse_args()
     return args
 
@@ -71,6 +67,7 @@ class CameraTimeStamp:
 '''
 args[0] = FileCount
 args[1] = CameraTimeStamp
+args[2] = data_dest
 '''
 def callback(data, args):
     file_path = "/home/musk/data/camera/cam_data_%s" % str(args[0].get_count(args[0])) # change to account for dest folder
@@ -83,10 +80,17 @@ def time_callback(data, arg):
     arg.update(arg, float(data.data))
 
 def listener():
+# Parse the arguments
     args = parse_args()
+    port = args.video_dev
+    data_dest = args.data_dest
+
+    port_name = ("usb_port_%s" % str(port))
+    time_name = ("ts_port_%s" % str(port))
+
     rospy.init_node('usb_cam_sub', anonymous=True)
-    rospy.Subscriber('cam_data_time', String, time_callback, callback_args=(CameraTimeStamp))
-    rospy.Subscriber('cam_data', numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp))
+    rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
+    rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest))
 
     rospy.spin()
 
