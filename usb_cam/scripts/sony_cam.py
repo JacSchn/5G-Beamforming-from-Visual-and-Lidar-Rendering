@@ -9,6 +9,10 @@ import subprocess
 import time
 
 import cv2
+import rospy
+from rospy_tutorials.msg import Floats
+from rospy.numpy_msg import numpy_msg
+from std_msgs.msg import String
 
 '''
 TODO
