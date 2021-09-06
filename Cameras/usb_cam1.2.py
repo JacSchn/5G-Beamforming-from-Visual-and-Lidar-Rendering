@@ -28,10 +28,10 @@ def parse_args():
                         help='device # of USB webcam (/dev/video?) [1]',
                         default=1, type=int)
     parser.add_argument('--width', dest='image_width',
-                        help='image width [1920]',
+                        help='image width [1280]',
                         default=1920, type=int)
     parser.add_argument('--height', dest='image_height',
-                        help='image height [1080]',
+                        help='image height [720]',
                         default=1080, type=int)
     args = parser.parse_args()
     return args
