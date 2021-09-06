@@ -38,8 +38,6 @@ def parse_args():
 
 class USBCam:
     def open_cam_usb(dev, width, height):
-        # We want to set width and height here, otherwise we could just do:
-        #     return cv2.VideoCapture(dev)
         gst_str = ('v4l2src device=/dev/video{} ! '
                    'video/x-raw, width=(int){}, height=(int){} ! '
                 'videoconvert ! appsink').format(dev, width, height)
