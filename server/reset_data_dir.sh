@@ -2,8 +2,8 @@
 
 # Script resets the folders holding the sweep_dump and bf data
 
-rm -r ~/server_data/bf_data/
-rm -r ~/server_data/sweep_dump_data/
+rm -r ~/server_data/bf_data/*
+rm -r ~/server_data/sweep_dump_data/*
 
 echo -e "Deleted Server data folders\n"
 

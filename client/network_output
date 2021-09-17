@@ -41,3 +41,39 @@ Connecting to host 192.168.100.7, port 5103
 [  5] 2220.00-2280.00 sec  10.3 GBytes  1.48 Gbits/sec  575    478 KBytes       
 [  5] 2280.00-2340.00 sec  10.6 GBytes  1.51 Gbits/sec  1088    382 KBytes       
 [  5] 2340.00-2400.00 sec  10.6 GBytes  1.52 Gbits/sec  397    506 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 49438 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.6 GBytes  1.52 Gbits/sec  19587    410 KBytes       
+[  5]  60.00-120.00 sec  10.3 GBytes  1.48 Gbits/sec  18276    419 KBytes       
+[  5] 120.00-180.00 sec  10.6 GBytes  1.51 Gbits/sec  17000    297 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59112 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.6 GBytes  1.52 Gbits/sec  22073    452 KBytes       
+[  5]  60.00-120.00 sec  10.9 GBytes  1.56 Gbits/sec  24991    436 KBytes       
+[  5] 120.00-180.00 sec  11.3 GBytes  1.62 Gbits/sec  24060    297 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59116 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.4 GBytes  1.49 Gbits/sec  20653    494 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59124 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.8 GBytes  1.54 Gbits/sec  20916    264 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59132 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.2 GBytes  1.46 Gbits/sec  16746    438 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59136 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.5 GBytes  1.51 Gbits/sec  19829    452 KBytes       
+[  5]  60.00-120.00 sec  10.7 GBytes  1.54 Gbits/sec  21482    420 KBytes       
+[  5] 120.00-180.00 sec  10.7 GBytes  1.53 Gbits/sec  22626    402 KBytes       
+[  5] 180.00-240.00 sec  7.72 GBytes  1.11 Gbits/sec  17236    395 KBytes       
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 59140 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-60.00  sec  10.7 GBytes  1.53 Gbits/sec  20809    233 KBytes       
+[  5]  60.00-120.00 sec  9.55 GBytes  1.37 Gbits/sec  20672    349 KBytes       
