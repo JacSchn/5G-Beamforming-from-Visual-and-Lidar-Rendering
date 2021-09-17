@@ -39,10 +39,10 @@ def parse_args():
                         default=1, type=int)
     parser.add_argument('--width', dest='image_width',
                         help='image width [1280]',
-                        default=1280, type=int)
+                        default=640, type=int)
     parser.add_argument('--height', dest='image_height',
                         help='image height [720]',
-                        default=720, type=int)
+                        default=360, type=int)
     args = parser.parse_args()
     return args
 

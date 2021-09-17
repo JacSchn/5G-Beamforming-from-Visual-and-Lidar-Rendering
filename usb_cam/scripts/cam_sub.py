@@ -19,18 +19,6 @@ import subprocess
 
 import cv2
 
-'''
-TODO
-1. Allow user to add arguments for video port of sony camera
-	This will be used to subscribe to the correct topic since the topic is based on the camera port number
-
-2. Allow user to add argument for destination folder
-	Can be just the end folder and add it to the file_path
-	Both front and rear camera will go to separate folders. This method allows this with the same script
-
-'''
-
-
 def parse_args():
     # Parse input arguments
     desc = 'Capture and display live camera video on Jetson Nano'
@@ -88,7 +76,7 @@ def callback(data, args):
         args[0].init_count(args[0], args[2])
         args[0].set_init(args[0])
 
-    file_path = "/home/musk/data/%s/usb_data_%s" % (str(args[2]), str(args[0].get_count(args[0]))) # change to account for dest folder
+    file_path = "/home/musk/data/%s/usb_data_%s" % (str(args[2]), str(args[0].get_count(args[0])))
     #data.data = data.data.astype(dtype=np.uint8, copy=False)
     np.savez(file_path, args[1].time(args[1]),data.data.astype(dtype=np.uint8, copy=False))
     args[0].increment(args[0])
