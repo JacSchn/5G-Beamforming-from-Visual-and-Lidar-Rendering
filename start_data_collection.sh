@@ -12,6 +12,7 @@ echo -e "Starting Data Collection...\n"
 sleep 2
 
 # Start Server and Client router data collection scripts
+ssh root@192.168.1.7 '~/collect_data.sh'
 # gnome-terminal -q --window --title="Server Router" -e "bash -ic 'ssh root@192.168.1.7 eval \"~/collect_data.sh; /bin/sh\"'"
 
 # Start LiDAR data collection
