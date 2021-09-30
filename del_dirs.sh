@@ -4,7 +4,13 @@
 
 # Remove data from files
 rm -r $HOME/data/lidar/*
-rm -r $HOME/data/front_usb/*
-rm -r $HOME/data/rear_usb/*
+
+cd front_usb/
+ls | grep -P "usb_data_[0-9]*.npz" | xargs -d "\n" rm
+
+cd ../rear_usb/
+ls | grep -P "usb_data_[0-9]*.npz" | xargs -d "\n" rm
+cd ../
+
 rm -r $HOME/data/server_router/*
 rm -r $HOME/data/client_router/*
