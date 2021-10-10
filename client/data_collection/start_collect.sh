@@ -5,6 +5,10 @@
 mkdir -p ~/client_data/sweep_dump_data/
 mkdir -p ~/client_data/bf_data/
 
+# For tmp memory
+mkdir -p /tmp/client_data/sweep_dump_data/
+mkdir -p /tmp/client_data/bf_data/
+
 sh ~/data_collection/bf_collect.sh &
 sh ~/data_collection/sweep_dump_collect.sh true &
 

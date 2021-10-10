@@ -8,9 +8,15 @@ interval_compensate=0.05
 file_counter=0
 filepath=~/client_data/bf_data/"${file_counter}_bf"
 
+# For tmp memory
+filepath=/tmp/client_data/bf_data/"${file_counter}_bf"
+
 file_namer () {
 	file_counter=`expr ${file_counter} + 1`
-	filepath=~/client_data/bf_data/"${file_counter}_bf"
+
+	filepath=/tmp/client_data/bf_data/"${file_counter}_bf"
+
+#	filepath=~/client_data/bf_data/"${file_counter}_bf"
 }
 
 while true

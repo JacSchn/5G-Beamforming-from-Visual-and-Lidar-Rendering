@@ -10,6 +10,10 @@ else
 # Increase the value of -t for longer ping time
 # -i Speed of bandwith information
 # --logfile Logs information about connection
-
-	iperf3 -c 192.168.100.7 -p 5103 -t 3600 -i 60 --logfile network_output
+#
+#    Testing different command
+	iperf3 -c 192.168.100.7 -p 5103 -t 3600 > ~/network_output 2>&1 &
+#
+#    Origional command
+#	iperf3 -c 192.168.100.7 -p 5103 -t 3600 -i 60 --logfile network_output &
 fi

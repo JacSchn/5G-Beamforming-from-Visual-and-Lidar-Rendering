@@ -10,9 +10,16 @@ swp_counter=`cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | grep Coun
 file_counter=0
 filepath=~/client_data/sweep_dump_data/"${file_counter}_sw_d"
 
+# For tmp memory
+filepath=/tmp/client_data/sweep_dump_data/"${file_counter}_sw_d"
+
 file_namer () {
 	file_counter=`expr ${file_counter} + 1`
-	filepath=~/client_data/sweep_dump_data/"${file_counter}_sw_d"
+
+# For tmp memory
+	filepath=/tmp/client_data/sweep_dump_data/"${file_counter}_sw_d"
+
+#	filepath=~/client_data/sweep_dump_data/"${file_counter}_sw_d"
 }
 
 strip_data () {

@@ -11,9 +11,13 @@ swp_counter=`cat /sys/kernel/debug/ieee80211/phy2/wil6210/sweep_dump | grep Coun
 file_counter=0
 filepath=~/server_data/sweep_dump_data/"${file_counter}_sw_d"
 
+# For tmp directory
+filepath=/tmp/server_data/sweep_dump_data/"${file_counter}_sw_d"
+
 file_namer () {
 	file_counter=`expr ${file_counter} + 1`
-	filepath=~/server_data/sweep_dump_data/"${file_counter}_sw_d"
+	filepath=/tmp/server_data/sweep_dump_data/"${file_counter}_sw_d"
+#	filepath=~/server_data/sweep_dump_data/"${file_counter}_sw_d"
 }
 
 strip_data () {
