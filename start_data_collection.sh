@@ -32,6 +32,7 @@ echo -e "Started at time (ms): `date +%s%3N`\n"
 echo -e "Started at time (ms): `date +%s%3N`\n" >> ~/logs/start_time
 
 
+
 # Previous method that opens gnome terminals for each collection method
 ## Can add a
 ## ; $SHELL
