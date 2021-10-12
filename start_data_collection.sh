@@ -3,7 +3,7 @@
 # Start Data Collection
 
 boot_message(){
-	echo "Hello world"
+	echo "Started $1 data collection with PID of $2"
 }
 
 echo -e "Starting Data Collection...\n"
@@ -15,14 +15,17 @@ ssh root@192.168.1.7 '~/collect_data.sh'
 # Start LiDAR data collection
 rosrun rplidar_ros captureRPLiDAR > ~/logs/lidar/capture_log 2>&1 &
 echo $! > ~/logs/lidar/pid_data
+boot_message "LiDAR" "$!"
 
 # Start Front USB Camera data collection
 rosrun usb_cam cam_sub.py --vid 0 --dest front_usb > ~/logs/front_usb/usb_collection 2>&1 &
 echo $! > ~/logs/front_usb/pid_data
+boot_message "Front USB" "$!"
 
 # Start Rear USB Camera data collection
 rosrun usb_cam cam_sub.py --vid 2 --dest rear_usb > ~/logs/rear_usb/usb_collection 2>&1 &
 echo $! > ~/logs/rear_usb/pid_data
+boot_message "Rear USB" "$!"
 
 # Time when all collection methods are up
 echo -e "Started at time (ms): `date +%s%3N`\n"
