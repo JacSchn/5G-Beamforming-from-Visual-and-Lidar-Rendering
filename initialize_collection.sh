@@ -61,7 +61,7 @@ echo ${FUSB_PID} > ~/logs/front_usb/pid_launch
 echo -e "Launched Front USB Camera with PID of ${FUSB_PID}\n"
 
 # Launch Rear USB
-echo echo -e "Launching Rear USB Camera with Port \#3\n"
+echo echo -e "Launching Rear USB Camera on Port 2"
 rosrun usb_cam sony_cam.py --sony --vid 2 > ~/logs/rear_usb/usb_launch 2>&1 &
 RUSB_PID=$!
 echo ${RUSB_PID} > ~/logs/rear_usb/pid_launch
