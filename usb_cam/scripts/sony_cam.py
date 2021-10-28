@@ -89,7 +89,7 @@ def read_cam(cap, port_name, time_name):
 
         time_elasped = time.time() - prev
 
-        timestamp = time.time() #timestamp collection
+        timestamp = int(time.time()*1000) #timestamp collection. *1000 for ms format
 
         _, img = cap.read() # grab the next image frame from camera
 
