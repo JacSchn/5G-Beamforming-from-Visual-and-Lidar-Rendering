@@ -1,0 +1,20 @@
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 40520 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-5.00   sec   923 MBytes  1.55 Gbits/sec   40    492 KBytes       
+[  5]   5.00-10.00  sec   765 MBytes  1.28 Gbits/sec   93    475 KBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Retr
+[  5]   0.00-10.00  sec  1.65 GBytes  1.42 Gbits/sec  133             sender
+[  5]   0.00-10.00  sec  1.65 GBytes  1.42 Gbits/sec                  receiver
+
+iperf Done.
+Connecting to host 192.168.100.7, port 5103
+[  5] local 192.168.100.10 port 40536 connected to 192.168.100.7 port 5103
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  5]   0.00-7.54   sec   377 MBytes   419 Mbits/sec    0   32.5 KBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bandwidth       Retr
+[  5]   0.00-7.54   sec   377 MBytes   419 Mbits/sec    0             sender
+[  5]   0.00-7.54   sec  0.00 Bytes  0.00 bits/sec                  receiver
+iperf3: interrupt - the client has terminated
