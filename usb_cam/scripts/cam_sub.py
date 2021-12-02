@@ -60,7 +60,7 @@ class CameraTimeStamp:
     cam_ts = None
 
     def time(self):
-        return self.cam_ts
+        return int(self.cam_ts)
 
     def update(self, new_ts):
         self.cam_ts = new_ts

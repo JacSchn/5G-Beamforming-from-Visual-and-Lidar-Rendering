@@ -1,5 +1,5 @@
-
 #!/usr/bin/env python3
+
 '''
 Publisher for Sony IMX322 cameras
 '''
@@ -106,18 +106,16 @@ def read_cam(cap, port_name, time_name):
             try:
                 pub_timestamp.publish(str(timestamp)) #publish timestamp of cam data
                 rospy.loginfo(timestamp)
-                img_flat = img.flatten()
+                # B/W conversion
+                # This changes the array from 3D to 1D
+                gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                img_flat = gray_img.flatten()
                 img_flat = img_flat.astype(dtype=np.float32, casting='safe', copy=False)
-                # B/W conversion attempt
-                if "rgb" in img_flat.encoding:
-                    gray_img = cv2.cvtColor(img_flat, cv2.COLOR_RGB2GRAY)
-                elif "bgr" in img_flat.encoding:
-                    gray_img = cv2.cvtColor(img_flat, cv2.COLOR_BGR2GRAY)
                 # Transform back to Image message
-                gray_img_msg = self.cv_bridge.cv2_to_imgmsg(
-                gray_img, encoding="mono8")
+                #gray_img_msg = self.cv_bridge.cv2_to_imgmsg(
+                #gray_img, encoding="mono8")
                 # B/W converstion attempt end
-                pub.publish(gray_img) #publish cam data
+                pub.publish(img_flat) #publish cam data
             except rospy.ROSInterruptException:
                 rospy.logerr("ROS Interrupt Exception! Just ignore the exception!")
             except rospy.ROSTimeMovedBackwardsException:
