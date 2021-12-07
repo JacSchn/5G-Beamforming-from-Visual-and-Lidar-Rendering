@@ -44,8 +44,8 @@ def pubInitState(sensors: list, pub) -> None:
     Publish to all sensors their initial state.
     '''
     pub.Publish("0")
-    for sensor in sensors:
-        pub.Publish()
+    # for sensor in sensors:
+    #     pub.Publish()
 
 def runApp():
     '''
@@ -69,6 +69,7 @@ def runApp():
         if rospy.is_shutdown():
             print("Terminating Web App Companion")
             break
+        pubInitState(pub=pub)
 
         
 
