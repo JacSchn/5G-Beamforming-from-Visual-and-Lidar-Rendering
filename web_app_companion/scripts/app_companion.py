@@ -44,7 +44,7 @@ def pubInitState(sensors: list, pub) -> None:
     '''
     Publish to all sensors their initial state.
     '''
-    pub.Publish("0")
+    pub.publish("0")
     # for sensor in sensors:
     #     pub.Publish()
 
@@ -71,6 +71,7 @@ def runApp():
             print("Terminating Web App Companion")
             break
         pubInitState(front_usb, pub=pub)
+        time.sleep(2)
 
         
 

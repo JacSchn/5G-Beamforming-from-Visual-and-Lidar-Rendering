@@ -19,6 +19,8 @@ import subprocess
 
 import cv2
 
+STATUS = "0"
+
 def parse_args():
     # Parse input arguments
     desc = 'Subscriber for the Sony IMX322 USB camera publisher.\nSaves image arrays to a specified folder as a flattened array.'
@@ -65,12 +67,18 @@ class CameraTimeStamp:
     def update(self, new_ts):
         self.cam_ts = new_ts
 
+class Sensor:
+    def __init__(self, stat):
+        self.status = stat
+
 '''
 args[0] = FileCount
 args[1] = CameraTimeStamp
 args[2] = data_dest
 '''
 def callback(data, args):
+    if args[3].status == "0":
+        return
     if args[0].get_init(args[0]):
         print("Initialize count")
         args[0].init_count(args[0], args[2])
@@ -86,14 +94,16 @@ def time_callback(data, arg):
     arg.update(arg, float(data.data))
 
 
-def appCallback(sensor, args):
+class AppCallback(sensor, args):
     port_name = args[0]
     time_name = args[1]
     data_dest = args[2]
 
-    while sensor == '1':
-        rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
-        rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest))
+    usb = Sensor(stat="0")
+    usb.status = sensor.data
+    rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
+    rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest, usb))
+    print(f"In with data = {sensor.data}")
 
 
 def main():
