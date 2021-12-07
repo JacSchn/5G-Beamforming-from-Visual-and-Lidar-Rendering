@@ -19,6 +19,7 @@ import subprocess
 
 import cv2
 
+
 class AppCallback:
     def __init__(self, port_name, time_name, data_dest) -> None:
         self.status = "0"
@@ -30,20 +31,6 @@ class AppCallback:
         self.status = status.data
         print(f'Current status is {self.status}')
 
-    def parse_args():
-        # Parse input arguments
-        desc = 'Subscriber for the Sony IMX322 USB camera publisher.\nSaves image arrays to a specified folder as a flattened array.'
-        parser = argparse.ArgumentParser(description=desc)
-        parser.add_argument('--vid', dest='video_dev',
-                            help='device # of USB webcam (/dev/video?) [1]',
-                            default=1, type=int)
-
-        parser.add_argument('--dest', dest='data_dest', # ex. "--dest front_usb"
-                            help='destination folder for camera data',
-                            default=None)
-
-        args = parser.parse_args()
-        return args
 
     class FileCount:
         file_path = ""
@@ -101,6 +88,22 @@ class AppCallback:
 
     def time_callback(data, arg):
         arg.update(arg, float(data.data))
+
+
+def parse_args():
+    # Parse input arguments
+    desc = 'Subscriber for the Sony IMX322 USB camera publisher.\nSaves image arrays to a specified folder as a flattened array.'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('--vid', dest='video_dev',
+                        help='device # of USB webcam (/dev/video?) [1]',
+                        default=1, type=int)
+
+    parser.add_argument('--dest', dest='data_dest', # ex. "--dest front_usb"
+                        help='destination folder for camera data',
+                        default=None)
+
+    args = parser.parse_args()
+    return args
 
 
 def main():
