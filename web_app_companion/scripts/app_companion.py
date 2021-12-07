@@ -70,7 +70,7 @@ def runApp():
         if rospy.is_shutdown():
             print("Terminating Web App Companion")
             break
-        pubInitState(pub=pub)
+        pubInitState(front_usb, pub=pub)
 
         
 
