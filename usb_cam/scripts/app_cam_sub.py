@@ -89,7 +89,7 @@ def time_callback(data, arg):
 def appCallback(sensor, args):
     port_name = args[0]
     time_name = args[1]
-    data_dest = args[3]
+    data_dest = args[2]
 
     while sensor == '1':
         rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
