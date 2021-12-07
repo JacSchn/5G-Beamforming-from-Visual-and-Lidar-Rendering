@@ -85,26 +85,28 @@ def callback(data, args):
 def time_callback(data, arg):
     arg.update(arg, float(data.data))
 
-def listener():
-# Parse the arguments
+
+def appCallback(sensor, args):
+    port_name = args[0]
+    time_name = args[1]
+    data_dest = args[3]
+
+    while sensor == '1':
+        rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
+        rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest))
+
+
+def main():
     args = parse_args()
     port = args.video_dev
     data_dest = args.data_dest
 
     port_name = ("usb_port_%s" % str(port))
     time_name = ("ts_port_%s" % str(port))
-
     rospy.init_node('usb_cam_sub', anonymous=True)
-    rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
-    rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest))
-
+    rospy.Subscriber('sensor_status', String, appCallback, callback_args=(port_name, time_name, data_dest))
     rospy.spin()
-
-def main():
-    rospy.init_node('usb_cam_sub', anonymous=True)
-    rospy.Subscriber('sensor_status')
 
 
 if __name__ == '__main__':
-    main():
-    listener()
+    main()
