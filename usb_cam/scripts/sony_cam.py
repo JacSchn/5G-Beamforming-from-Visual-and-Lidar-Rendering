@@ -14,15 +14,6 @@ from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
 from std_msgs.msg import String
 
-'''
-TODO
-1. Strip out non-necessary functions and arguments
-
-2. Add publisher for timestamp and camera data
-	The publisher topic must relate to the camera port number
-
-'''
-
 def parse_args():
     # Parse input arguments
     desc = 'Capture and display live camera video on Jetson Nano'
@@ -49,7 +40,7 @@ def parse_args():
 # Open the stream for sony IMX322 USB camera
 def open_cam_sony(dev, width, height):
     gst_str = ('v4l2src device=/dev/video{} ! jpegdec ! videoconvert ! appsink').format(dev) # This command works
-#    gst_str = "v4l2src 'device=/dev/video1 io-mode=2' ! 'image/jpeg,width=1280,height=720' ! nvjpegdec ! video/x-raw ! nvvidconv ! 'video/x-raw(memory:NVMM),format=I420' ! nvoverlaysink"
+    #gst_str = "v4l2src 'device=/dev/video1 io-mode=2' ! 'image/jpeg,width=1280,height=720' ! nvjpegdec ! video/x-raw ! nvvidconv ! 'video/x-raw(memory:NVMM),format=I420' ! nvoverlaysink"
     cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(width))
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(height))
@@ -84,7 +75,7 @@ def read_cam(cap, port_name, time_name):
     while True:
 
         if rospy.is_shutdown():
-            print("Terminating ROS system")
+            print("Terminating ROS Camera Publisher System")
             break
 
         time_elasped = time.time() - prev
