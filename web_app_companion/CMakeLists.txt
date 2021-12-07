@@ -121,7 +121,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/usb_cam.cpp
+#   src/${PROJECT_NAME}/web_app_companion.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -159,7 +159,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
  catkin_install_python(PROGRAMS
-   scripts/controller.py
+   scripts/app_companion.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
