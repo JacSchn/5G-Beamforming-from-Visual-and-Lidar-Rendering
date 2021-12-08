@@ -60,13 +60,11 @@ def getState(URL: str, sensors: list) -> bool:
     '''
     endpoint = "getState"
     URL.join(endpoint)
-    data = initHeaderData(sensors=sensors)
+    data = initJsonData(sensors=sensors)
 
     sensorStates = req.get(url=URL, headers=data).json()
     
-    for senName, senStat in sensorStates['name'], sensorStates['status']:
-        print(f'State of {senName} is {senStat}.')
-
+    print(sensorStates)
     
     return 
 
