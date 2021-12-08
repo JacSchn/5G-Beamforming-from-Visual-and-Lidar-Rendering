@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
+  web_app_companion
 )
 
 ## System dependencies are found with CMake's conventions
