@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rosconsole
   sensor_msgs
-  web_app_companion_generate_messages_py
+  web_app_companion
 )
 
 include_directories(
