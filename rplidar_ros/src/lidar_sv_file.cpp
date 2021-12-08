@@ -40,6 +40,7 @@
 #include <fstream>
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+#include "web_app_companion/Sensor.h"
 
 // C library files
 #include <stdio.h>
