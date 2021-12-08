@@ -4,6 +4,7 @@ import requests as req
 import time
 import rospy
 from std_msgs.msg import String
+from usb_cam import Sensor
 
 class Sensor:
     def __init__(self, name: str) -> None:
@@ -68,11 +69,14 @@ def getState(URL: str, sensors: list) -> bool:
     
     return 
 
-def pubCurrState(sensors: list, pub) -> None:
+def pubCurrState(pub) -> None:
     '''
     Publish to all sensors their current state.
     '''
-    pub.publish("0")
+    msg = Sensor()
+    msg.name = 'front_usb'
+    msg.state = True
+    pub.publish(msg)
     # for sensor in sensors:
     #     pub.Publish()
 
@@ -89,8 +93,10 @@ def runApp():
     URL = 'http://localhost:9000/'
 
     print('Setting up app companion publisher on topic /sensor_status')
-    pub = rospy.Publisher('sensor_status', String, queue_size=4)
+    pub = rospy.Publisher('sensor_status', Sensor, queue_size=4)
     rospy.init_node('app_companion_pub', anonymous=True)
+    # r = rospy.Rate(1) # 1hz
+    # r.sleep()
     print('Initialized app companion publisher on topic /sensor_status')
     time.sleep(2)
     
@@ -98,7 +104,7 @@ def runApp():
         if rospy.is_shutdown():
             print("Terminating Web App Companion")
             break
-        pubCurrState(front_usb, pub=pub)
+        pubCurrState(pub)
         time.sleep(2)
 
         

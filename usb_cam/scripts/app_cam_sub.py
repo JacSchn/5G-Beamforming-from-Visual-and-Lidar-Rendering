@@ -7,7 +7,7 @@ import csv
 import time
 import numpy as np
 from std_msgs.msg import String
-from message_generation import Sensor
+from usb_cam import Sensor
 from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
 
@@ -26,7 +26,7 @@ import cv2
 class USBCam:
     def __init__(self, port_name: str, time_name: str, data_dest: str, name: str) -> None:
         self.state = False # Initial state is off
-        self.statusSub = rospy.Subscriber('sensor_status', String, self.updateStatus)
+        self.statusSub = rospy.Subscriber('sensor_status', Sensor, self.updateStatus)
         self.timeSub = rospy.Subscriber(time_name, String, self.time_callback, callback_args=(self.CameraTimeStamp))
         self.camSub = rospy.Subscriber(port_name, numpy_msg(Floats), self.callback, callback_args=(self.FileCount,self.CameraTimeStamp, data_dest))
         self.name = name
