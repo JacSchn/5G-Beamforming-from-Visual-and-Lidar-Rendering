@@ -23,9 +23,9 @@ import cv2
 class AppCallback:
     def __init__(self, port_name, time_name, data_dest) -> None:
         self.status = "0"
-        self.statusSub = rospy.Subscriber('sensor_status', String, statusCallback, callback_args=(port_name, time_name, data_dest))
-        self.timeSub = rospy.Subscriber(time_name, String, time_callback, callback_args=(CameraTimeStamp))
-        self.camSub = rospy.Subscriber(port_name, numpy_msg(Floats), callback, callback_args=(FileCount,CameraTimeStamp, data_dest, usb))
+        self.statusSub = rospy.Subscriber('sensor_status', String, self.statusCallback)
+        self.timeSub = rospy.Subscriber(time_name, String, self.time_callback, callback_args=(self.CameraTimeStamp))
+        self.camSub = rospy.Subscriber(port_name, numpy_msg(Floats), self.callback, callback_args=(self.FileCount,self.CameraTimeStamp, data_dest))
         
     def statusCallback(self, status):
         self.status = status.data
@@ -86,7 +86,7 @@ class AppCallback:
         args[0].increment(args[0])
         print(args[1].time(args[1]))
 
-    def time_callback(data, arg):
+    def time_callback(self, data, arg):
         arg.update(arg, float(data.data))
 
 
