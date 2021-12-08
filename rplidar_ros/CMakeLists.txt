@@ -32,7 +32,6 @@ target_link_libraries(rplidarNodeClient ${catkin_LIBRARIES})
 
 add_executable(captureRPLiDAR src/lidar_sv_file.cpp)
 target_link_libraries(captureRPLiDAR ${catkin_LIBRARIES})
-add_dependencies(captureRPLiDAR web_app_companion_generate_messages_py)
 
 add_executable(timeTest src/time_test.cpp)
 target_link_libraries(timeTest ${catkin_LIBRARIES})
