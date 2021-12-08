@@ -7,7 +7,7 @@ import csv
 import time
 import numpy as np
 from std_msgs.msg import String
-from usb_cam.msg import Sensor
+from web_app_companion.msg import Sensor
 from rospy_tutorials.msg import Floats
 from rospy.numpy_msg import numpy_msg
 
