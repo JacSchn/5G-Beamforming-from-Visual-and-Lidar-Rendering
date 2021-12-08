@@ -93,8 +93,8 @@ LidarProcessor::LidarProcessor(){
 }
 
 void LidarProcessor::updateStatus(const web_app_companion::Sensor::ConstPtr& update){
-    if(update.name == this->name){
-        this->state = update.state
+    if(update->name == this->name){
+        this->state = update->state
     }
     std::cout << "The current state of " << this->name << " is " << this->state << std::endl;
 }
