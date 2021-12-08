@@ -34,7 +34,7 @@ class USBCam:
     def updateStatus(self, status):
         if self.name == status.name:
             self.state = status.state
-        print(f'Current collection state is {self.state}')
+        print(f'Current collection state for {self.name} is {self.state}')
 
 
     class FileCount:
@@ -74,7 +74,7 @@ class USBCam:
     args[2] = data_dest
     '''
     def callback(self, data, args):
-        if self.status == "0":
+        if self.state == False:
             return
         if args[0].get_init(args[0]):
             print("Initialize count")
@@ -88,7 +88,7 @@ class USBCam:
         print(args[1].time(args[1]))
 
     def time_callback(self, data, arg):
-        if self.status == "0":
+        if self.state == False:
             return
         arg.update(arg, float(data.data))
 
