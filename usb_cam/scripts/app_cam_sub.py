@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+
+from requests.sessions import InvalidSchema
 import rospy
 import csv
 import time
@@ -20,16 +22,18 @@ import subprocess
 import cv2
 
 
-class AppCallback:
-    def __init__(self, port_name, time_name, data_dest) -> None:
-        self.status = "0"
-        self.statusSub = rospy.Subscriber('sensor_status', String, self.statusCallback)
+class USBCam:
+    def __init__(self, port_name: str, time_name: str, data_dest: str, name: str) -> None:
+        self.state = False # Initial state is off
+        self.statusSub = rospy.Subscriber('sensor_status', String, self.updateStatus)
         self.timeSub = rospy.Subscriber(time_name, String, self.time_callback, callback_args=(self.CameraTimeStamp))
         self.camSub = rospy.Subscriber(port_name, numpy_msg(Floats), self.callback, callback_args=(self.FileCount,self.CameraTimeStamp, data_dest))
+        self.name = name
         
-    def statusCallback(self, status):
-        self.status = status.data
-        print(f'Current status is {self.status}')
+    def updateStatus(self, status):
+        if self.name == status.name:
+            self.state = status.state
+        print(f'Current collection state is {self.state}')
 
 
     class FileCount:
@@ -63,10 +67,6 @@ class AppCallback:
         def update(self, new_ts):
             self.cam_ts = new_ts
 
-    class Sensor:
-        def __init__(self, stat):
-            self.status = stat
-
     '''
     args[0] = FileCount
     args[1] = CameraTimeStamp
@@ -98,25 +98,36 @@ def parse_args():
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--vid', dest='video_dev',
                         help='device # of USB webcam (/dev/video?) [1]',
-                        default=1, type=int)
+                        default=None, type=str)
 
     parser.add_argument('--dest', dest='data_dest', # ex. "--dest front_usb"
                         help='destination folder for camera data',
-                        default=None)
+                        default=None, type=str)
+    
+    parser.add_argument('--name', dest='name',
+                        help='name of sensor',
+                        default=None, type=str)
 
     args = parser.parse_args()
+
+    if args.video_dev == None:
+        parser.error('--vid Must be set!')
+    if args.data_dest == None:
+        parser.error('--dest Must be set!')
+    if args.name == None:
+        parser.error('--name Must be set!')
+
     return args
 
 
 def main():
     args = parse_args()
-    port = args.video_dev
-    data_dest = args.data_dest
-    port_name = ("usb_port_%s" % str(port))
-    time_name = ("ts_port_%s" % str(port))
+    port_name = ("usb_port_%s" % args.video_dev)
+    time_name = ("ts_port_%s" % str(args.video_dev))
+    node_name = ('%s_port_%s' % (args.name, args.video_dev))
 
-    rospy.init_node('usb_cam_sub', anonymous=True)
-    usbData = AppCallback(port_name=port_name, time_name=time_name, data_dest=data_dest)
+    rospy.init_node(node_name)
+    _ = USBCam(port_name, time_name, args.data_dest, args.name)
     rospy.spin()
 
 
