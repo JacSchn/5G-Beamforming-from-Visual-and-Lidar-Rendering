@@ -94,7 +94,7 @@ LidarProcessor::LidarProcessor(){
 
 void LidarProcessor::updateStatus(const web_app_companion::Sensor::ConstPtr& update){
     if(update->name == this->name){
-        this->state = update->state
+        this->state = update->state;
     }
     std::cout << "The current state of " << this->name << " is " << this->state << std::endl;
 }
@@ -107,7 +107,7 @@ void LidarProcessor::updateFilePath(){
 
 void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     if(this->state == false){
-        return
+        return;
     }
     //auto lidarOutputFile = std::fstream("~/data/lidar/scan_data.txt",std::ios::out);
     std::ofstream lidarOutputFile;
