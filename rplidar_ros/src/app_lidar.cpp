@@ -38,6 +38,7 @@
 #include <chrono> // for timestamp
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 #include "web_app_companion/Sensor.h"
@@ -55,11 +56,16 @@ class LidarProcessor
 {
     int numFiles = -2; //avoids counting two hidden dir
     std::string filePath = "/home/musk/data/lidar/scan_data_";
+    std::string name = "rp_lidar";
+    bool state = false;
+    ros::Subscriber subApp;
+    ros::Subscriber subLidar;
 
     public:
         LidarProcessor();
         void updateFilePath();
         void scanCallback(const sensor_msgs::LaserScan::ConstPtr&);
+        void updateStatus(const web_app_companion::Sensor::ConstPtr&);
 };
 
 LidarProcessor::LidarProcessor(){
@@ -79,6 +85,18 @@ LidarProcessor::LidarProcessor(){
 
 
     filePath += std::to_string(numFiles) + ".txt"; //initialize first file
+
+
+    ros::NodeHandle n;
+    subLidar = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, &LidarProcessor::scanCallback, this);
+    subApp = n.subscribe<web_app_companion::Sensor>("/sensor_status", 1000, &LidarProcessor::updateStatus, this);
+}
+
+void LidarProcessor::updateStatus(const web_app_companion::Sensor::ConstPtr& update){
+    if(update.name == this->name){
+        this->state = update.state
+    }
+    std::cout << "The current state of " << this->name << " is " << this->state << std::endl;
 }
 
 // Update the file name for new scan
@@ -88,6 +106,9 @@ void LidarProcessor::updateFilePath(){
 }
 
 void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
+    if(this->state == false){
+        return
+    }
     //auto lidarOutputFile = std::fstream("~/data/lidar/scan_data.txt",std::ios::out);
     std::ofstream lidarOutputFile;
     lidarOutputFile.open(filePath, std::ios::out | std::ios::app);
@@ -114,10 +135,8 @@ void LidarProcessor::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "rplidar_node_write_file");
-    ros::NodeHandle n;
+    ros::init(argc, argv, "app_rplidar_write");
     LidarProcessor lidarProcessor;
-    ros::Subscriber sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, &LidarProcessor::scanCallback, &lidarProcessor);
 
     ros::spin();
 
