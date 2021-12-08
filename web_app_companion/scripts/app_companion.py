@@ -4,16 +4,20 @@ import requests as req
 import time
 import rospy
 from web_app_companion.msg import String
-from usb_cam import Sensor
+from usb_cam import Sensor as msgSensor
 
 class Sensor:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.statusOn = False
+        self.state = False
         self.timeTurnedOn = 0
         self.timeTurnedOff = time.time()
 
 def initJsonData(sensors: list) -> dict:
+    '''
+    Returns an array of dictionaries under key "sensor"
+    Each dictionary is set up with a sensor's name, status, turnedOnAt, and turnedOffAt values
+    '''
     retDict = {
         "sensor": []
     }
@@ -63,19 +67,19 @@ def getState(URL: str, sensors: list) -> bool:
     URL.join(endpoint)
     data = initJsonData(sensors=sensors)
 
-    sensorStates = req.get(url=URL, headers=data).json()
+    sensorStates = req.get(url=URL, json=data).json()
     
     print(sensorStates)
     
-    return 
+    return sensorStates
 
-def pubCurrState(pub) -> None:
+def pubCurrState(sensor: Sensor, pub) -> None:
     '''
-    Publish to all sensors their current state.
+    Publish the current state of a sensor.
     '''
-    msg = Sensor()
-    msg.name = 'front_usb'
-    msg.state = True
+    msg = msgSensor()
+    msg.name = sensor.name
+    msg.state = sensor.state
     pub.publish(msg)
     # for sensor in sensors:
     #     pub.Publish()
