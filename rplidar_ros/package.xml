@@ -12,6 +12,8 @@
   <build_depend>rosconsole</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_srvs</build_depend>
+  <build_depend>web_app_companion</build_depend>
+  <run_depend>web_app_companion</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rosconsole</run_depend>
   <run_depend>sensor_msgs</run_depend>
