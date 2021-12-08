@@ -87,6 +87,8 @@ class AppCallback:
         print(args[1].time(args[1]))
 
     def time_callback(self, data, arg):
+        if self.status == "0":
+            return
         arg.update(arg, float(data.data))
 
 
