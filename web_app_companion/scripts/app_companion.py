@@ -3,7 +3,7 @@ from typing import List
 import requests as req
 import time
 import rospy
-from std_msgs.msg import String
+from web_app_companion.msg import String
 from usb_cam import Sensor
 
 class Sensor:
