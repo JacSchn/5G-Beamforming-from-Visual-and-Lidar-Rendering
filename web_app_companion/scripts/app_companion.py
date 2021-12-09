@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from typing import List
 import requests as req
+from datetime import datetime
 import time
 import rospy
 from web_app_companion.msg import String
@@ -10,39 +10,32 @@ class Sensor:
     def __init__(self, name: str) -> None:
         self.name = name
         self.state = False
-        self.timeTurnedOn = 0
-        self.timeTurnedOff = time.time()
+        self.timestamp = datetime.now().strftime('%I:%M:%S%p')
+        self.newState = False
 
 def initJsonData(sensors: list) -> dict:
     '''
     Returns an array of dictionaries under key "sensor"
-    Each dictionary is set up with a sensor's name, status, turnedOnAt, and turnedOffAt values
+    Each dictionary is set up with a sensor's name, state, turnedOnAt, and turnedOffAt values
     '''
-    retDict = {
-        "sensor": []
-    }
-
     if len(sensors) == 0:
-        retDict['sensor'].append({
-            "name": '',
-            "status": False,
-            "turnedOnAt": None,
-            "turnedOffAt": None
-        })
-        return retDict
+        raise ValueError("Length of sensors must be greater than 0")
+
+    retDict = {
+        "sensor": [],
+    }
 
     for sensor in sensors:
         retDict['sensor'].append({
             "name": sensor.name,
-            "status": sensor.status,
-            "turnedOnAt": sensor.timeTurnedOn,
-            "turnedOffAt": sensor.timeTurnedOff
+            "state": sensor.state,
+            "timestamp": sensor.timestamp,
+            "newState": sensor.newState
         })
 
-    
     return retDict
 
-def postSensorData(URL: str, sensors: list) -> bool:
+async def postSensorData(URL: str, sensors: list) -> bool:
     '''
     Send http header data of a sensor to app with url=URL and endpoint being /micro
     '''
@@ -50,7 +43,8 @@ def postSensorData(URL: str, sensors: list) -> bool:
     URL.join(endpoint)
     data = initJsonData(sensors=sensors)
 
-    ret_val = req.post(url=URL, json=data).txt
+    ret_val = await req.post(url=URL, json=data).txt
+
     if ret_val == 200:
         print(f"Post request SUCCESS")
         return True
@@ -58,58 +52,84 @@ def postSensorData(URL: str, sensors: list) -> bool:
         print(f"Post request FAILURE")
         return False
 
+def updateCurrentState(sensorStates: dict, sensors: list) -> list:
+    '''
+    Update the current state of a sensor if their state has been updated.
+    '''
+    updatedSensors = []
+    for s in sensors:
+        if s.name in sensorStates:
+            s.state = sensorStates[s.name]
+            s.timestamp = datetime.now().strftime('%I:%M:%S%p')
+            s.newState = True
+            updatedSensors.append(s)
+    
+    return updatedSensors
 
-def getState(URL: str, sensors: list) -> bool:
+async def getState(URL: str) -> dict:
     '''
     Get current state at endpoint /getState
     '''
     endpoint = "getState"
     URL.join(endpoint)
-    data = initJsonData(sensors=sensors)
 
-    sensorStates = req.get(url=URL, json=data).json()
+    newStates = await req.get(url=URL).json()
     
-    print(sensorStates)
+    print(newStates)
     
-    return sensorStates
+    return newStates
 
-def pubCurrState(sensor: Sensor, pub) -> None:
+def pubCurrState(sensors: list, pub) -> None:
     '''
-    Publish the current state of a sensor.
+    Publish the current state of a sensor if it has been updated
     '''
     msg = msgSensor()
-    msg.name = sensor.name
-    msg.state = sensor.state
-    pub.publish(msg)
-    # for sensor in sensors:
-    #     pub.Publish()
+    for s in sensors:
+        if s.newState == True:
+            msg.name = s.name
+            msg.state = s.state
+            pub.Publish(msg)
+            s.newState = False
 
 def runApp():
     '''
     Connects to the web app and publishes which sensor state changed.
     All sensors begin in an off state.
     '''
-    
-    front_usb = Sensor('front_usb')
-    rear_usb = Sensor('rear_usb')
-    rp_lidar = Sensor('rp_lidar')
-    veloview_lidar = Sensor('veloview_lidar')
+    sensors = [
+        Sensor('front_usb'),
+        Sensor('rear_usb'),
+        Sensor('rp_lidar'),
+        Sensor('veloview_lidar')
+    ]
+
     URL = 'http://localhost:9000/'
 
     print('Setting up app companion publisher on topic /sensor_status')
-    pub = rospy.Publisher('sensor_status', Sensor, queue_size=4)
+    pub = rospy.Publisher('sensor_status', Sensor, queue_size=5)
     rospy.init_node('app_companion_pub', anonymous=True)
     # r = rospy.Rate(1) # 1hz
     # r.sleep()
     print('Initialized app companion publisher on topic /sensor_status')
     time.sleep(2)
-    
+    postSensorData(URL, sensors)
+
     while True:
         if rospy.is_shutdown():
             print("Terminating Web App Companion")
             break
-        pubCurrState(pub)
-        time.sleep(2)
+
+        updatedSensors = updateCurrentState(getState(URL), sensors)
+        if len(updatedSensors) > 0:
+            success = postSensorData(URL, updatedSensors)
+            if not success:
+                # Try to post sensor info one more time
+                time.sleep(1)
+                postSensorData(URL, updatedSensors)
+
+            pubCurrState(updatedSensors, pub)
+
+        time.sleep(1)
 
         
 
