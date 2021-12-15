@@ -3,8 +3,7 @@ import requests as req
 from datetime import datetime
 import time
 import rospy
-from web_app_companion.msg import String
-from usb_cam import Sensor as msgSensor
+from web_app_companion.msg import Sensor as msgSensor
 
 class Sensor:
     def __init__(self, name: str) -> None:
@@ -30,7 +29,6 @@ def initJsonData(sensors: list) -> dict:
             "name": sensor.name,
             "state": sensor.state,
             "timestamp": sensor.timestamp,
-            "newState": sensor.newState
         })
 
     return retDict
@@ -85,11 +83,9 @@ def pubCurrState(sensors: list, pub) -> None:
     '''
     msg = msgSensor()
     for s in sensors:
-        if s.newState == True:
-            msg.name = s.name
-            msg.state = s.state
-            pub.Publish(msg)
-            s.newState = False
+        msg.name = s.name
+        msg.state = bool(s.state)
+        pub.Publish(msg)
 
 def runApp():
     '''
