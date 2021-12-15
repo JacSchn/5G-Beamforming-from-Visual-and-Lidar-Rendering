@@ -102,7 +102,7 @@ def runApp():
     URL = 'http://localhost:9000/'
 
     print('Setting up app companion publisher on topic /sensor_status')
-    pub = rospy.Publisher('sensor_status', Sensor, queue_size=5)
+    pub = rospy.Publisher('sensor_status', msgSensor, queue_size=5)
     rospy.init_node('app_companion_pub', anonymous=True)
     # r = rospy.Rate(1) # 1hz
     # r.sleep()
