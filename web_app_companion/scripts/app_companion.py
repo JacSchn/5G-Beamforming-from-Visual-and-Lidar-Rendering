@@ -60,6 +60,7 @@ def postSensorData(URL: str, sensors: list) -> bool:
     data = initJsonData(sensors=sensors)
 
     ret_val = req.post(url=URL, json=data).text
+    print(f'Return from post is {ret_val}')
 
     if ret_val == 200:
         print(f"Post request SUCCESS")
@@ -91,9 +92,9 @@ def getState(URL: str) -> dict:
     URL += endpoint
 
     newStates = req.get(url=URL).json()
-    
+    print(newStates)
     for s in newStates:
-        print(f'{s} current state is {newStates[s]}')
+        print(f'{s} current state is {newStates[f"{s}"]}')
     
     return newStates
 
