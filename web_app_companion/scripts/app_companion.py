@@ -65,7 +65,7 @@ def postSensorData(URL: str, sensors: list) -> bool:
     if ret_val == 'OK':
         print(f"Post request SUCCESS")
         return True
-    elif ret_val == 500:
+    else:
         print(f"Post request FAILURE")
         return False
 
