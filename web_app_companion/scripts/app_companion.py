@@ -59,7 +59,7 @@ def postSensorData(URL: str, sensors: list) -> bool:
     URL = URL + endpoint
     data = initJsonData(sensors=sensors)
 
-    ret_val = req.post(url=URL, json=data).txt
+    ret_val = req.post(url=URL, json=data).text
 
     if ret_val == 200:
         print(f"Post request SUCCESS")
