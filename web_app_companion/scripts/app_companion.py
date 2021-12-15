@@ -60,7 +60,6 @@ def postSensorData(URL: str, sensors: list) -> bool:
     data = initJsonData(sensors=sensors)
 
     ret_val = req.post(url=URL, json=data).text
-    print(f'Return from post is {ret_val}')
 
     if ret_val == 'OK':
         print(f"Post request SUCCESS")
