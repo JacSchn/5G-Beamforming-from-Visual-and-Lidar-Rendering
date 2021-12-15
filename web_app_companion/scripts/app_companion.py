@@ -33,7 +33,7 @@ def initJsonData(sensors: list) -> dict:
 
     return retDict
 
-async def postSensorData(URL: str, sensors: list) -> bool:
+def postSensorData(URL: str, sensors: list) -> bool:
     '''
     Send http header data of a sensor to app with url=URL and endpoint being /micro
     '''
@@ -41,7 +41,7 @@ async def postSensorData(URL: str, sensors: list) -> bool:
     URL.join(endpoint)
     data = initJsonData(sensors=sensors)
 
-    ret_val = await req.post(url=URL, json=data).txt
+    ret_val = req.post(url=URL, json=data).txt
 
     if ret_val == 200:
         print(f"Post request SUCCESS")
@@ -64,14 +64,14 @@ def updateCurrentState(sensorStates: dict, sensors: list) -> list:
     
     return updatedSensors
 
-async def getState(URL: str) -> dict:
+def getState(URL: str) -> dict:
     '''
     Get current state at endpoint /getState
     '''
     endpoint = "getState"
     URL.join(endpoint)
 
-    newStates = await req.get(url=URL).json()
+    newStates = req.get(url=URL).json()
     
     print(newStates)
     
