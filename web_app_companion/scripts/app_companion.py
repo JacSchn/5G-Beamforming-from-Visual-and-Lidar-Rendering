@@ -92,7 +92,6 @@ def getState(URL: str) -> dict:
     URL += endpoint
 
     newStates = req.get(url=URL).json()
-    print(newStates)
     for s in newStates:
         print(f'{s} current state is {newStates[f"{s}"]}')
     
@@ -105,7 +104,6 @@ def pubCurrState(sensors: list, pub) -> None:
     msg = msgSensor()
     for s in sensors:
         msg.name = s.name
-        print(s.state)
         msg.state = bool(s.state)
         pub.publish(msg)
 
