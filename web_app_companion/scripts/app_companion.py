@@ -38,20 +38,20 @@ def postSensorData(URL: str, sensors: list) -> bool:
     Send http header data of a sensor to app with url=URL and endpoint being /micro
     '''
     endpoint = "micro"
-    URL.join(endpoint)
+    URL = URL + endpoint
+    print(f'The URL in post sensor data is {URL}')
     data = initJsonData(sensors=sensors)
 
-    try:
-        ret_val = req.post(url=URL, json=data).txt
+    ret_val = req.post(url=URL, json=data)
+    print(ret_val)
+    return True
+    if ret_val == 200:
+        print(f"Post request SUCCESS")
+        return True
+    elif ret_val == 500:
+        print(f"Post request FAILURE")
+        return False
 
-        if ret_val == 200:
-            print(f"Post request SUCCESS")
-            return True
-        elif ret_val == 500:
-            print(f"Post request FAILURE")
-            return False
-    except:
-        raise ConnectionError("App not currently active")
 
 def updateCurrentState(sensorStates: dict, sensors: list) -> list:
     '''
@@ -72,7 +72,7 @@ def getState(URL: str) -> dict:
     Get current state at endpoint /getState
     '''
     endpoint = "getState"
-    URL.join(endpoint)
+    URL += endpoint
 
     newStates = req.get(url=URL).json()
     
@@ -88,7 +88,7 @@ def pubCurrState(sensors: list, pub) -> None:
     for s in sensors:
         msg.name = s.name
         msg.state = bool(s.state)
-        pub.Publish(msg)
+        pub.publish(msg)
 
 def runApp():
     '''
@@ -102,7 +102,7 @@ def runApp():
         Sensor('veloview_lidar')
     ]
 
-    URL = 'http://localhost:9000/'
+    URL = f'http://{WEB_APP_IP}:9000/'
 
     print('Setting up app companion publisher on topic /sensor_status')
     pub = rospy.Publisher('sensor_status', msgSensor, queue_size=5)
