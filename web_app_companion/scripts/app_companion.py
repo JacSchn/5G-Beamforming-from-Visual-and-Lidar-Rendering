@@ -62,7 +62,7 @@ def postSensorData(URL: str, sensors: list) -> bool:
     ret_val = req.post(url=URL, json=data).text
     print(f'Return from post is {ret_val}')
 
-    if ret_val == 200:
+    if ret_val == 'OK':
         print(f"Post request SUCCESS")
         return True
     elif ret_val == 500:
