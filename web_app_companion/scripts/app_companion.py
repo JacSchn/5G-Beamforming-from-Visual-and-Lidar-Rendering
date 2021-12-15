@@ -78,7 +78,6 @@ def updateCurrentState(sensorStates: dict, sensors: list) -> list:
     for s in sensors:
         if s.name in sensorStates:
             s.state = sensorStates[s.name]
-            print(sensorStates[s.name])
             s.timestamp = datetime.now().strftime('%I:%M:%S%p')
             s.newState = True
             updatedSensors.append(s)
@@ -106,6 +105,7 @@ def pubCurrState(sensors: list, pub) -> None:
     msg = msgSensor()
     for s in sensors:
         msg.name = s.name
+        print(s.state)
         msg.state = bool(s.state)
         pub.publish(msg)
 
