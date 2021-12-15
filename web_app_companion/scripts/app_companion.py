@@ -41,14 +41,17 @@ def postSensorData(URL: str, sensors: list) -> bool:
     URL.join(endpoint)
     data = initJsonData(sensors=sensors)
 
-    ret_val = req.post(url=URL, json=data).txt
+    try:
+        ret_val = req.post(url=URL, json=data).txt
 
-    if ret_val == 200:
-        print(f"Post request SUCCESS")
-        return True
-    elif ret_val == 500:
-        print(f"Post request FAILURE")
-        return False
+        if ret_val == 200:
+            print(f"Post request SUCCESS")
+            return True
+        elif ret_val == 500:
+            print(f"Post request FAILURE")
+            return False
+    except:
+        raise ConnectionError("App not currently active")
 
 def updateCurrentState(sensorStates: dict, sensors: list) -> list:
     '''
