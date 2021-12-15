@@ -1,9 +1,27 @@
 #!/usr/bin/env python3
+
+import argparse
 import requests as req
 from datetime import datetime
 import time
 import rospy
 from web_app_companion.msg import Sensor as msgSensor
+
+def parse_args():
+    # Parse input arguments
+    desc = 'Subscriber for the Sony IMX322 USB camera publisher.\nSaves image arrays to a specified folder as a flattened array.'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('--ip', dest='web_app_ip',
+                        help='IP address of the device hosting the web application',
+                        default=None, type=str)
+
+    args = parser.parse_args()
+
+    if args.WEB_APP_IP == None:
+        parser.error('--ip Must be set!')
+
+    return args
+
 
 class Sensor:
     def __init__(self, name: str) -> None:
@@ -39,12 +57,10 @@ def postSensorData(URL: str, sensors: list) -> bool:
     '''
     endpoint = "micro"
     URL = URL + endpoint
-    print(f'The URL in post sensor data is {URL}')
     data = initJsonData(sensors=sensors)
 
-    ret_val = req.post(url=URL, json=data)
-    print(ret_val)
-    return True
+    ret_val = req.post(url=URL, json=data).txt
+
     if ret_val == 200:
         print(f"Post request SUCCESS")
         return True
@@ -76,7 +92,8 @@ def getState(URL: str) -> dict:
 
     newStates = req.get(url=URL).json()
     
-    print(newStates)
+    for s in newStates:
+        print(f'{s} current state is {newStates[s]}')
     
     return newStates
 
@@ -95,6 +112,7 @@ def runApp():
     Connects to the web app and publishes which sensor state changed.
     All sensors begin in an off state.
     '''
+    args = parse_args()
     sensors = [
         Sensor('front_usb'),
         Sensor('rear_usb'),
@@ -102,7 +120,7 @@ def runApp():
         Sensor('veloview_lidar')
     ]
 
-    URL = f'http://{WEB_APP_IP}:9000/'
+    URL = f'http://{args.web_app_ip}:9000/'
 
     print('Setting up app companion publisher on topic /sensor_status')
     pub = rospy.Publisher('sensor_status', msgSensor, queue_size=5)
@@ -129,8 +147,6 @@ def runApp():
             pubCurrState(updatedSensors, pub)
 
         time.sleep(1)
-
-        
 
 if __name__ == '__main__':
     runApp()
