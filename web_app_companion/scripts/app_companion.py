@@ -78,6 +78,7 @@ def updateCurrentState(sensorStates: dict, sensors: list) -> list:
     for s in sensors:
         if s.name in sensorStates:
             s.state = sensorStates[s.name]
+            print(sensorStates[s.name])
             s.timestamp = datetime.now().strftime('%I:%M:%S%p')
             s.newState = True
             updatedSensors.append(s)
