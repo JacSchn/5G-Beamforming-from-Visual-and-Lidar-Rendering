@@ -17,7 +17,7 @@ def parse_args():
 
     args = parser.parse_args()
 
-    if args.WEB_APP_IP == None:
+    if args.web_app_ip == None:
         parser.error('--ip Must be set!')
 
     return args
