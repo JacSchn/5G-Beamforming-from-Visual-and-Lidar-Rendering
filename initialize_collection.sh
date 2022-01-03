@@ -17,7 +17,7 @@ echo "Launching necessary scripts prior to data collection..."
 sleep 0.5
 echo -e "Checking Nano's Time Sync...\n"
 sleep 1
-service chrony status
+service chrony status > ~/logs/chrony/initialize 2>&1 &
 sleep 2
 
 echo -e "\nDate on Nano:" `date`
