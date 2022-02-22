@@ -68,38 +68,58 @@ import numpy as np
 #         print(file['arr_0'])
 #         print(file['arr_1'])
 
-def parseDual(input: str= None):
-    parser = argparse.ArgumentParser(description=argparse.SUPPRESS,usage=argparse.SUPPRESS,epilog=argparse.SUPPRESS,add_help=False, prefix_chars='[')
+def parentParser(space: str, pfx: str = '') -> argparse.ArgumentParser:
+    parent = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, add_help=False)
 
-    parser.add_argument('[cake',help='is cake')
-    print(f'\n\n{input}\n\n')
-    parser.print_help()
+    parent.add_argument('-sd', '--saveDest', dest=f'{pfx}save_dest', metavar='\b', type=str, nargs=1, 
+                            help=f'{space}save directory when the --save flag is set')
+    
+    parent.add_argument('-fp', '--filePref', dest=f'{pfx}file_prefix', metavar='\b', type=str, nargs=1, 
+                            help=f'{space}file prefix that the image will be saved with')
 
-    return parser
+    return parent
 
-def parseArgs():
+def parseDual(parser: argparse.ArgumentParser, space: str) -> None:
     '''
-    Parse command line arguments.
+    Options for when specifying a second display.\n
+    Useful for when wanting to show multiple camera images to the screen at once.
+    '''
+    subparser = parser.add_subparsers(dest="sec_disp_cmd", title="Second Display", metavar='DUAL',
+                                    description="run '%(prog)s . dual -h' for a full list of arguments")
+
+    sec_disp_sub = subparser.add_parser('dual', formatter_class=argparse.RawTextHelpFormatter, parents=[parentParser(space=space, pfx='sec_')], 
+                                        help='display images from another directory',
+                                        usage='%(prog)s dataDir dual [-h] [-sd [-fp]] secDataDir') # Need custom usage to indicate --sd and --fp are mutually inclusive
+    
+    sec_disp_sub.add_argument('dataDir', metavar='secDataDir', type=str, nargs=1,
+                            help='filepath of the directory the data is stored in')
+
+def parseArgs() -> argparse.Namespace:
+    '''
+    Parse command line arguments.\n
     Documentation for argparse can be found here https://docs.python.org/3/library/argparse.html.
     '''
     space = '    ' # Hacky method to align the help description for arguments that use '\b' for the metavar value.
 
-    desc = 'View previously captured images that is currently saved in a .npz file on screen.\n  By default the images run continuously.'
-    parser = argparse.ArgumentParser(description=desc,formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument('data_dir', metavar='dataDir', help='filepath of the directory the data is stored in', type=str)
-
-
-    parser.add_argument('-W','--width', dest='width',
-                        help=f'{space}capture width of image (default: %(default)s)',
-                        default=640, type=int, metavar='\b') # The value of metavar changes the default help display from "-W WIDTH, --width WIDTH" to "-W, --width"
-                                                             # \b is a backspace character. An empty string results in an extra space being added.
-
-    parser.add_argument('-H','--height', dest='height',
-                        help=f'{space}capture height of image (default: %(default)s)',
-                        default=360, type=int, metavar='\b')
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, parents=[parentParser(space)],
+                                    usage='%(prog)s [-h] [-w] [-ht] [-s] [-sv [-sd [-fp]]] [-v] [--color] dataDir DUAL ...', # Need custom usage to indicate -s, -sd, -fp are mutually inclusive
+                                    description='View previously captured images that is currently saved in a .npz file on screen.\n  By default the images run continuously.')
     
-    parser.add_argument('-v','--version', action='version',version='%(prog)s\nVersion 1.0')
+    parser.add_argument('data_dir', metavar='dataDir', type=str,
+                        help='filepath of the directory the data is stored in')
+    
+     # The value of metavar changes the default help display from "-W WIDTH, --width WIDTH" to "-W, --width"
+     # \b is a backspace character. An empty string results in an extra space being added.
+    parser.add_argument('-w','--width', dest='width', metavar='\b', default=640, type=int,
+                        help=f'{space}capture width of image (default: %(default)s)')
+                                                             
+    parser.add_argument('-ht','--height', dest='height', metavar='\b', default=360, type=int,
+                        help=f'{space}capture height of image (default: %(default)s)')
+    
+    parser.add_argument('-s','--step', dest='step', metavar='\b', default=10, type=int, choices=range(1,21),
+                        help=f'{space}step through images\n  step size (default: %(default)s)\n  possible choices [1..20]')
+
+    parser.add_argument('-v','--version', action='version', version='%(prog)s\nVersion 1.0')
 
     '''
     Optional flags
@@ -107,38 +127,32 @@ def parseArgs():
     '''
     opt_flags = parser.add_argument_group(title='optional flags')
 
-    opt_flags.add_argument('--color', dest='is_color',
-                        help='enables color mode\n  Note: Only works with data that was originally captured in color',
-                        action='store_true')
+    opt_flags.add_argument('--color', dest='is_color', action='store_true',
+                        help='enables color mode (default: %(default)s)\n  Note: Only works with data that was originally captured in color')
 
-    opt_flags.add_argument('-s','--step', dest='step',
-                        help=f'{space}step size', metavar='\b')
+    opt_flags.add_argument('-sv', '--save', dest='will_save', action='store_true',
+                        help='save images (default: %(default)s)')
 
-    '''
-    Options for when specifying a second display.
-    Useful for when wanting to show multiple camera images to the screen at once.
-    '''
+    parseDual(parser=parser, space=space) # Subparser for second display arguments
 
-    
+    args = parser.parse_args() # Extract argument values
 
-    secondDisp = parser.add_argument_group(title='Second Display',description='Additional flags to use when -d or --dual was specified')
+    # Check validity of arguments that are mutually inclusive
+    if args.will_save:
+        if not args.save_dest and not args.file_prefix:
+            parser.error('the following arguments are required: -sd -fp')
+        if args.save_dest and not args.file_prefix:
+            parser.error('the following arguments are required: -fp')
+        if  args.file_prefix and not args.save_dest:
+            parser.error('the following arguments are required: -sd')
 
-
-    
-    
-    secondDisp.add_argument('-d','--dual', help=f'{space}display a second set of images', action=CustomAction, additional_arg1='[foo', additional_arg2='--bar', nargs='?', default=argparse.SUPPRESS)
-
-    
-
-    args = parser.parse_args()
-    
-    print(args)
-    # if args.video_dev == None:
-    #     parser.error('--vid Must be set!')
-    # if args.data_dest == None:
-    #     parser.error('--dest Must be set!')
-    # if args.name == None:
-    #     parser.error('--name Must be set!')
+    if args.will_save and args.sec_disp_cmd:
+        if not args.sec_save_dest and not args.sec_file_prefix:
+            parser.error('the following arguments are required: -sd -fp')
+        if args.sec_save_dest and not args.sec_file_prefix:
+            parser.error('the following arguments are required for dual: -fp')
+        if  args.sec_file_prefix and not args.sec_save_dest:
+            parser.error('the following arguments are required for dual: -sd')
 
     return args
 
@@ -155,29 +169,3 @@ if __name__ == '__main__':
 
 #TODO Add dual run mode. See both front and rear images at the same time
 #TODO Add flag and function to convert numpy array to an image and save it in a user specified directory.
-
-
-
-
-
-'''
-Junk Code
-
-    class CustomAction(argparse.Action):
-        def __init__(self, option_strings, additional_arg1, additional_arg2,*args, **kwargs):
-            self._a1 = additional_arg1
-            self._a2 = additional_arg2
-            super(CustomAction, self).__init__(option_strings=option_strings,*args, **kwargs)
-            
-        def __call__(self, parser: argparse.ArgumentParser, namespace, values: str, option_string=None):
-            print(self._a1)
-            print(self._a2)
-            print(option_string)
-            print(str(values))
-            print(namespace)
-            parser.prefix_chars = '['
-            secondDisp.add_argument(self._a1, help='has foo', default='Major Foo')
-            #parser.parse_args(str(values))
-            setattr(namespace, self.dest, values)
-
-'''
