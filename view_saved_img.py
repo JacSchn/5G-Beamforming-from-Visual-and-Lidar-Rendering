@@ -5,80 +5,27 @@
 #Data array can be 1D or 3D.
 
 
-# import cv2
-from msilib.schema import Class
+from dis import dis
+import cv2
 import os
 import argparse
-# from matplotlib.pyplot import title
 import numpy as np
 
-# def gstreamer_pipeline(
-#     capture_width=640,
-#     capture_height=360,
-#     display_width=640,
-#     display_height=360,
-#     framerate=20,
-#     flip_method=0,
-# ):
-#     return (
-#         "nvarguscamerasrc ! "
-#         "video/x-raw(memory:NVMM), "
-#         "width=(int)%d, height=(int)%d, "
-#         "format=(string)NV12, framerate=(fraction)%d/1 ! "
-#         "nvvidconv flip-method=%d ! "
-#         "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
-#         "videoconvert ! "
-#         "video/x-raw, format=(string)BGR ! appsink"
-#         % (
-#             capture_width,
-#             capture_height,
-#             framerate,
-#             flip_method,
-#             display_width,
-#             display_height,
-#         )
-#     )
-
-# def GetImage(i):
-#     file = np.load('/home/musk/data/front_usb/usb_data_%i.npz' % i)
-#     #np.set_printoptions(threshold=np.inf)
-#     print(file['arr_0'])
-#     return file['arr_1'].reshape(360,640,1)
-
-
-# def ReturnImageMap():
-#     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-#     if cap.isOpened():
-#         window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
-#         for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
-#             cv2.imshow("CSI Camera", GetImage(i))
-#             keyCode = cv2.waitKey(30) & 0xFF
-
-#             if keyCode == 27:
-#                 break
-#         cap.release()
-#         cv2.destroyAllWindows()
-#     else:
-#         print("Unable to open camera")
-
-# def printTimeStampOnly():
-#     for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
-#         file = np.load('/home/musk/data/front_usb/usb_data_%i.npz' % i)
-#         print(file['arr_0'])
-#         print(file['arr_1'])
-
-def parentParser(space: str, pfx: str = '') -> argparse.ArgumentParser:
+def parent_parser(space: str, pfx: str = '') -> argparse.ArgumentParser:
     parent = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, add_help=False)
+        
+    parent.add_argument(f'{pfx}data_src', metavar='dataDir', type=str, nargs=1,
+                        help='filepath of the directory the data is stored in')
 
     parent.add_argument('-sd', '--saveDest', dest=f'{pfx}save_dest', metavar='\b', type=str, nargs=1, 
                             help=f'{space}save directory when the --save flag is set')
     
     parent.add_argument('-fp', '--filePref', dest=f'{pfx}file_prefix', metavar='\b', type=str, nargs=1, 
-                            help=f'{space}file prefix that the image will be saved with')
+                            help=f'{space}file prefix that the image will be saved with\n  Ex: cam_img_')
 
     return parent
 
-def parseDual(parser: argparse.ArgumentParser, space: str) -> None:
+def parent_dual(parser: argparse.ArgumentParser, space: str) -> None:
     '''
     Options for when specifying a second display.\n
     Useful for when wanting to show multiple camera images to the screen at once.
@@ -86,26 +33,20 @@ def parseDual(parser: argparse.ArgumentParser, space: str) -> None:
     subparser = parser.add_subparsers(dest="sec_disp_cmd", title="Second Display", metavar='DUAL',
                                     description="run '%(prog)s . dual -h' for a full list of arguments")
 
-    sec_disp_sub = subparser.add_parser('dual', formatter_class=argparse.RawTextHelpFormatter, parents=[parentParser(space=space, pfx='sec_')], 
+    subparser.add_parser('dual', formatter_class=argparse.RawTextHelpFormatter, parents=[parent_parser(space=space, pfx='sec_')], 
                                         help='display images from another directory',
-                                        usage='%(prog)s dataDir dual [-h] [-sd [-fp]] secDataDir') # Need custom usage to indicate --sd and --fp are mutually inclusive
-    
-    sec_disp_sub.add_argument('dataDir', metavar='secDataDir', type=str, nargs=1,
-                            help='filepath of the directory the data is stored in')
+                                        usage='%(prog)s dataDir dual [-h] [-sd [-fp]] dataDir') # Need custom usage to indicate --sd and --fp are mutually inclusive
 
-def parseArgs() -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     '''
     Parse command line arguments.\n
     Documentation for argparse can be found here https://docs.python.org/3/library/argparse.html.
     '''
     space = '    ' # Hacky method to align the help description for arguments that use '\b' for the metavar value.
 
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, parents=[parentParser(space)],
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, parents=[parent_parser(space)],
                                     usage='%(prog)s [-h] [-w] [-ht] [-s] [-sv [-sd [-fp]]] [-v] [--color] dataDir DUAL ...', # Need custom usage to indicate -s, -sd, -fp are mutually inclusive
                                     description='View previously captured images that is currently saved in a .npz file on screen.\n  By default the images run continuously.')
-    
-    parser.add_argument('data_dir', metavar='dataDir', type=str,
-                        help='filepath of the directory the data is stored in')
     
      # The value of metavar changes the default help display from "-W WIDTH, --width WIDTH" to "-W, --width"
      # \b is a backspace character. An empty string results in an extra space being added.
@@ -132,10 +73,10 @@ def parseArgs() -> argparse.Namespace:
     opt_flags.add_argument('-sv', '--save', dest='will_save', action='store_true',
                         help='save images (default: %(default)s)')
 
-    parseDual(parser=parser, space=space) # Subparser for second display arguments
+    parent_dual(parser=parser, space=space) # Subparser for second display arguments
 
     args = parser.parse_args() # Extract argument values
-
+    print(f"\n{args}\n")
     # Check validity of arguments that are mutually inclusive
     if args.will_save:
         if not args.save_dest and not args.file_prefix:
@@ -156,14 +97,95 @@ def parseArgs() -> argparse.Namespace:
     return args
 
 class ImageData:
+    def __init__(self, data_src: str, sv_dest: str=None, file_pfx: str=None):
+        self.src = data_src[0]
+        self.dest = sv_dest
+        self.file_pfx = file_pfx
+
+class Display:
+    def __init__(self, w: int, h: int, step: int, color: bool, save: bool):
+        self.width = w
+        self.height = h
+        self.depth = 3 if color else 1 # Depth of array. 3 for color. 1 for B/W
+        self.step = step
+        self.is_color = color
+        self.will_save = save
+
+def init_image_data() -> tuple[ImageData, Display]:
+    args = parse_args()
+    
+    cam1 = None
+    cam2 = None
+
+    if args.will_save:
+        cam1 = ImageData(args.data_src, args.save_dest, args.file_prefix)
+        if args.sec_disp_cmd: # True if sec image dir was specified
+            cam2 = ImageData(args.sec_data_src, args.sec_save_dest, args.sec_file_prefix)
+    else:
+        cam1 = ImageData(args.data_src)
+        if args.sec_disp_cmd:
+            cam2 = ImageData(args.sec_data_src)
+
+    ret_cam = [cam1, cam2] if args.sec_disp_cmd else [cam1]
+
+    return ret_cam, Display(args.width, args.height, args.step, args.is_color, args.will_save)
+    
+def GetImage(i):
+    file = np.load(r'C:\Users\sflyn\Documents\Research Project\Jetson Car\Data\Data-10-29-21\front_usb\usb_data_%i.npz' % i)
+    #np.set_printoptions(threshold=np.inf)
+    print(file['arr_0'])
+    return file['arr_1'].reshape(360,640,3)
+
+def GetRearImage(i):
+    file = np.load(r'C:\Users\sflyn\Documents\Research Project\Jetson Car\Data\Data-10-29-21\rear_usb\usb_data_%i.npz' % i)
+    #np.set_printoptions(threshold=np.inf)
+    print(file['arr_0'])
+    return file['arr_1'].reshape(360,640,3)
+
+def get_nparray(i: int, id: ImageData, d: Display) -> np.ndarray:
+    file = np.load(rf'{id.src}\usb_data_{i}.npz')
+    return file['arr_1'].reshape(d.height, d.width, d.depth)
+
+def display(imd: list, d: Display) -> None:
+    
+    cv2.namedWindow("Generic Cam 0", cv2.WINDOW_AUTOSIZE)
+    cv2.namedWindow("Generic Cam 1", cv2.WINDOW_AUTOSIZE)
+    print(imd)
+    for i in range(0, len(os.listdir(r'C:\Users\sflyn\Documents\Research Project\Jetson Car\Data\Data-10-29-21\front_usb'))):
+        for j, im_data in enumerate(imd):
+            cv2.imshow(f"Generic Cam {j}", get_nparray(i, im_data, d))
+        
+        keyCode = cv2.waitKey(30) & 0xFF
+        
+        if keyCode == 27:
+            break
+
+    cv2.destroyAllWindows()
     
 
+    # if cap.isOpened():
+    #     window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
+    #     for i in range (0, len(os.listdir('front_usb'))):
+    #         cv2.imshow("CSI Camera", GetImage(i))
+    #         keyCode = cv2.waitKey(30) & 0xFF
+
+    #         if keyCode == 27:
+    #             break
+    #     cap.release()
+    #     cv2.destroyAllWindows()
+    # else:
+    #     print("Unable to open camera")
+
+def printTimeStampOnly():
+    for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
+        file = np.load('/home/musk/data/front_usb/usb_data_%i.npz' % i)
+        print(file['arr_0'])
+        print(file['arr_1'])
 
 def main():
-    args = parseArgs()
-    # port_name = ("usb_port_%s" % args.video_dev)
-    # time_name = ("ts_port_%s" % str(args.video_dev))
-    # node_name = ('%s_port_%s' % (args.name, args.video_dev))
+    image, disp = init_image_data()
+    display(image, disp)
+
 
 if __name__ == '__main__':
     main()
