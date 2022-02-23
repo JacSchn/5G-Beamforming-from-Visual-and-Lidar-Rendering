@@ -6,10 +6,9 @@
 
 
 # import cv2
-from email.utils import parsedate
+from msilib.schema import Class
 import os
 import argparse
-from tkinter import N
 # from matplotlib.pyplot import title
 import numpy as np
 
@@ -148,13 +147,16 @@ def parseArgs() -> argparse.Namespace:
 
     if args.will_save and args.sec_disp_cmd:
         if not args.sec_save_dest and not args.sec_file_prefix:
-            parser.error('the following arguments are required: -sd -fp')
+            parser.error('the following arguments are required for dual: -sd -fp')
         if args.sec_save_dest and not args.sec_file_prefix:
             parser.error('the following arguments are required for dual: -fp')
         if  args.sec_file_prefix and not args.sec_save_dest:
             parser.error('the following arguments are required for dual: -sd')
 
     return args
+
+class ImageData:
+    
 
 
 def main():
@@ -169,3 +171,4 @@ if __name__ == '__main__':
 
 #TODO Add dual run mode. See both front and rear images at the same time
 #TODO Add flag and function to convert numpy array to an image and save it in a user specified directory.
+#TODO Add sync flag to automatically sync up the two outputs when displaying two at the same time. Can be done by looking at the timestamp
