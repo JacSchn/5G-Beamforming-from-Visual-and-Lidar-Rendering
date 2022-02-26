@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-#Playback the captured camera data.
-#A video will appear showing each image while the timestamp related to the image will appear on console
+# View previously saved image array data.
 #Data array can be 1D or 3D.
 
-import multiprocessing as mp
-from sys import maxsize
 import cv2
 import os
 import argparse
@@ -103,7 +100,7 @@ class Display:
         self.height = h
         self.depth = depth
         self.step = step
-        self.will_save = save
+        self.save = save
 
 def init_image_data() -> tuple[ImageData, Display]:
     args = parse_args()
@@ -144,8 +141,11 @@ def display(imd: list, disp: Display) -> None:
         for j, im_data in enumerate(imd):
             if i >= dir_sizes[j]:
                 continue
-            cv2.imshow(im_data.win_name, get_nparray(i, im_data, disp))
-    
+            nparr = get_nparray(i, im_data, disp)
+            cv2.imshow(im_data.win_name, nparr)
+            if disp.save:
+                cv2.imwrite(f'{im_data.dest}\\{im_data.file_pfx}{i}.jpeg', nparr)    
+
         if disp.step > 1:
             input()
 
@@ -154,33 +154,7 @@ def display(imd: list, disp: Display) -> None:
         if keyCode == 27:
             break
                 
-
-
-    #TODO Need to change this. Both streams may not be of same length
-    # for i in range(0, len(os.listdir(r'C:\Users\sflyn\Documents\Research Project\Jetson Car\Data\Data-10-29-21\front_usb')), disp.step):
-    #     for im_data in imd:
-    #         cv2.imshow(im_data.win_name, get_nparray(i, im_data, disp))
-        
-        # keyCode = cv2.waitKey(20) & 0xFF # FPS of video being shown
-        
-        # if keyCode == 27:
-        #     break
-
     cv2.destroyAllWindows()
-    
-
-    # if cap.isOpened():
-    #     window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
-    #     for i in range (0, len(os.listdir('front_usb'))):
-    #         cv2.imshow("CSI Camera", GetImage(i))
-    #         keyCode = cv2.waitKey(30) & 0xFF
-
-    #         if keyCode == 27:
-    #             break
-    #     cap.release()
-    #     cv2.destroyAllWindows()
-    # else:
-    #     print("Unable to open camera")
 
 def printTimeStampOnly():
     for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
@@ -196,48 +170,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-#TODO Add dual run mode. See both front and rear images at the same time
-#TODO Add flag and function to convert numpy array to an image and save it in a user specified directory.
-#TODO Add sync flag to automatically sync up the two outputs when displaying two at the same time. Can be done by looking at the timestamp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-def parent_parser(space: str, pfx: str = '') -> argparse.ArgumentParser:
-    parent = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, add_help=False)
-        
-    parent.add_argument(f'{pfx}data_src', metavar='dataDir', type=str, nargs=1,
-                        help='filepath of the directory the data is stored in')
-
-    parent.add_argument('-sd', '--saveDest', dest=f'{pfx}save_dest', metavar='\b', type=str, nargs=1, 
-                            help=f'{space}save directory when the --save flag is set')
-    
-    parent.add_argument('-fp', '--filePref', dest=f'{pfx}file_prefix', metavar='\b', type=str, nargs=1, 
-                            help=f'{space}file prefix that the image will be saved with\n  Ex: cam_img_')
-
-    return parent
-
-def parent_dual(parser: argparse.ArgumentParser, space: str) -> None:
-    
-    # Options for when specifying a second display.\n
-    # Useful for when wanting to show multiple camera images to the screen at once.
-    
-    subparser = parser.add_subparsers(dest="sec_disp_cmd", title="Second Display", metavar='DUAL',
-                                    description="run '%(prog)s . dual -h' for a full list of arguments")
-
-    subparser.add_parser('dual', formatter_class=argparse.RawTextHelpFormatter, parents=[parent_parser(space=space, pfx='sec_')], 
-                                        help='display images from another directory',
-                                        usage='%(prog)s dataDir dual [-h] [-sd [-fp]] dataDir') # Need custom usage to indicate --sd and --fp are mutually inclusive
-'''
+# TODO Add sync flag to automatically sync up the two outputs when displaying two at the same time. Can be done by looking at the timestamp
