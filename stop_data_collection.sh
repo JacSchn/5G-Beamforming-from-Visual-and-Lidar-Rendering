@@ -64,11 +64,6 @@ kill_output "$?" "Rear USB data collection"
 
 sleep 0.5
 
-# Kill LiDAR launch
-PID=`cat ~/logs/lidar/pid_launch`
-sudo kill -2 ${PID}
-kill_output "$?" "LiDAR launch"
-
 # Kill front USB launch
 PID=`cat ~/logs/front_usb/pid_launch`
 sudo kill -2 ${PID}
@@ -77,6 +72,8 @@ ret_val=$?
 if [ $ret_val -ne 0 ]; then
 	force_kill_cam "0" "front USB"
 fi
+
+sleep 0.5
 
 # Kill rear USB launch
 PID=`cat ~/logs/rear_usb/pid_launch`
@@ -87,6 +84,23 @@ if [ $ret_val -ne 0 ]; then
 	force_kill_cam "2" "rear USB"
 fi
 
+# Kill LiDAR launch
+PID=`cat ~/logs/lidar/pid_launch`
+sudo kill -2 ${PID}
+kill_output "$?" "LiDAR launch"
+
 # Stop server and client router data collection
 ssh root@192.168.1.7 '~/stop_collect_data.sh'
 
+# Final check to see if USB cameras have been killed
+sudo fuser /dev/video0
+ret_val=$?
+if [ $ret_val -eq 0 ]; then
+	force_kill_cam "0" "front USB"
+fi
+
+sudo fuser /dev/video2 > /dev/null 2>&1
+ret_val=$?
+if [ $ret_val -eq 0 ]; then
+	force_kill_cam "2" "rear USB"
+fi
