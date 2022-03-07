@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
                         help=f'{space}capture height of image (default: %(default)s)')
 
     parser.add_argument('-wn', dest='win_name', metavar='', default=[], type=str, nargs='+',
-                        help=f'{space}window name for image(s)')
+                        help=f'window name for image(s)')
     
     parser.add_argument('-s','--step', dest='step', metavar='\b', default=1, type=int, choices=range(1,51),
                         help=f'{space}step through images\n  step size (default: %(default)s)\n  possible choices [1..50]')
