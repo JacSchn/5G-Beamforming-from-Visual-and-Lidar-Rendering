@@ -123,7 +123,7 @@ def init_image_data() -> tuple[ImageData, Display]:
     return cams, Display(args.width, args.height, args.depth, args.step,  args.will_save)
     
 def get_nparray(i: int, id: ImageData, d: Display) -> np.ndarray:
-    file = np.load(rf'{id.src}\usb_data_{i}.npz')
+    file = np.load(os.path.join(id.src, f'usb_data_{i}.npz'))
     return file['arr_1'].reshape(d.height, d.width, d.depth)
 
 def display(imd: list, disp: Display) -> None:
@@ -144,8 +144,8 @@ def display(imd: list, disp: Display) -> None:
             nparr = get_nparray(i, im_data, disp)
             cv2.imshow(im_data.win_name, nparr)
             if disp.save:
-                cv2.imwrite(f'{im_data.dest}\\{im_data.file_pfx}{i}.jpeg', nparr)    
-
+                cv2.imwrite(os.path.join(im_data.dest,f'{im_data.file_pfx}{i}.jpeg'), nparr)
+                
         if disp.step > 1:
             input()
 
@@ -171,3 +171,4 @@ if __name__ == '__main__':
     main()
 
 # TODO Add sync flag to automatically sync up the two outputs when displaying two at the same time. Can be done by looking at the timestamp
+# TODO Add checks to ensure the directories that are inputted exist.
