@@ -104,7 +104,7 @@ def read_cam(cap, port_name, time_name):
             except rospy.ROSTimeMovedBackwardsException:
                 rospy.logerr("ROS Time Backwards! Just ignore the exception!")
 
-#       cv2.imshow('Hello There', img) # shows camera image
+        cv2.imshow('Hello There', img) # shows camera image
         key = cv2.waitKey(10)
 
         # Display camera stream info
