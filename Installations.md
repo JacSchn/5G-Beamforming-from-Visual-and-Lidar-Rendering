@@ -113,4 +113,4 @@ git clone https://github.com/JacSchn/5G-Beamforming-from-Visual-and-Lidar-Render
 
 
 
-"git clone <url> --branch <branch> --single-branch <folder>"
+git clone "url" --branch "branch" --single-branch "folder""
