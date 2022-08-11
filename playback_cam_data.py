@@ -10,10 +10,10 @@ import cv2
 import os
 
 def gstreamer_pipeline(
-    capture_width=160,
-    capture_height=120,
-    display_width=160,
-    display_height=120,
+    capture_width=640,
+    capture_height=360,
+    display_width=640,
+    display_height=360,
     framerate=20,
     flip_method=0,
 ):
@@ -37,17 +37,17 @@ def gstreamer_pipeline(
     )
 
 def GetImage(i):
-    file = np.load('/home/musk/data/camera/cam_data_%i.npz' % i)
+    file = np.load('/home/musk/data/front_usb/usb_data_%i.npz' % i)
     #np.set_printoptions(threshold=np.inf)
     print(file['arr_0'])
-    return file['arr_1'].reshape(120,160,3)
+    return file['arr_1'].reshape(360,640,1)
 
 
 def ReturnImageMap():
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if cap.isOpened():
         window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
-        for i in range (0, len(os.listdir('/home/musk/data/camera'))):
+        for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
             cv2.imshow("CSI Camera", GetImage(i))
             keyCode = cv2.waitKey(30) & 0xFF
 
@@ -58,7 +58,11 @@ def ReturnImageMap():
     else:
         print("Unable to open camera")
 
-
+def printTimeStampOnly():
+    for i in range (0, len(os.listdir('/home/musk/data/front_usb/'))):
+        file = np.load('/home/musk/data/front_usb/usb_data_%i.npz' % i)
+        print(file['arr_0'])
+        print(file['arr_1'])
 
 if __name__=="__main__":
-    ReturnImageMap()
+    printTimeStampOnly()
